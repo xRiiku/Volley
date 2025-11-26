@@ -1,0 +1,175 @@
+<div
+  *ngIf="player && open"
+  class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
+  (click)="close.emit()"
+>
+  <!-- Contenedor del modal -->
+  <div
+    class="w-full max-w-xl bg-[var(--cl_background_white)] text-[var(--cl_text)] border border-[var(--cl_border)] border-radius-20 shadow-xl"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- CABECERA -->
+    <div
+      class="p-4 border-b border-[var(--cl_border)] flex justify-between items-center bg-[var(--cl_corp)] text-[var(--cl_text_light)]"
+    >
+      <h3 class="font-titles text-[var(--font-size-20)]">
+        Estadísticas · {{ player.name }} (#{{ player.number }})
+      </h3>
+
+      <button
+        type="button"
+        (click)="close.emit()"
+        class="px-3 py-1 border-radius-10 bg-[var(--cl_corp2)] text-[var(--cl_background_dark)] hover:bg-[var(--cl_corp2_hover)]"
+      >
+        Cerrar
+      </button>
+    </div>
+
+    <!-- FORMULARIO -->
+    <form
+      class="p-4 grid grid-cols-2 gap-3 text-[var(--cl_title)]"
+      [formGroup]="form"
+      (ngSubmit)="save()"
+    >
+      <!-- fila 1 -->
+      <label class="flex flex-col">
+        Puntos
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="points"
+        />
+      </label>
+
+      <label class="flex flex-col">
+        Aces
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="aces"
+        />
+      </label>
+
+      <label class="flex flex-col">
+        Err. saque
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="serve_errors"
+        />
+      </label>
+
+      <!-- fila 2 -->
+      <label class="flex flex-col">
+        Ataques
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="attacks"
+        />
+      </label>
+
+      <label class="flex flex-col">
+        Kills
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="kills"
+        />
+      </label>
+
+      <label class="flex flex-col">
+        Err. ataque
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="attack_errors"
+        />
+      </label>
+
+      <!-- fila 3 -->
+      <label class="flex flex-col">
+        Bloqueos
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="blocks"
+        />
+      </label>
+
+      <label class="flex flex-col">
+        Err. bloqueo
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="block_errors"
+        />
+      </label>
+
+      <!-- fila 4 -->
+      <label class="flex flex-col">
+        Defensas (digs)
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="digs"
+        />
+      </label>
+
+      <label class="flex flex-col">
+        Recepciones
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="receptions"
+        />
+      </label>
+
+      <label class="flex flex-col">
+        Err. recepción
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="reception_errors"
+        />
+      </label>
+
+      <!-- fila 5 -->
+      <label class="flex flex-col">
+        Asistencias
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="assists"
+        />
+      </label>
+
+      <label class="flex flex-col">
+        Err. colocación
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="set_errors"
+        />
+      </label>
+
+      <!-- Botones -->
+      <div class="col-span-2 flex gap-3 justify-end mt-3">
+        <button
+          type="submit"
+          class="px-4 py-2 rounded-15 bg-[var(--cl_corp)] text-[var(--cl_text_light)] hover:bg-[var(--cl_corp_hover)]"
+        >
+          Guardar
+        </button>
+
+        <button
+          type="button"
+          class="px-4 py-2 rounded-15 bg-[var(--cl_background_gray)] text-[var(--cl_title)] border border-[var(--cl_border)]"
+          (click)="close.emit()"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

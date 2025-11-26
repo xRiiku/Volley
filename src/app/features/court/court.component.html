@@ -1,0 +1,89 @@
+<div class="min-h-screen background-body p-6 font-page">
+  <h1 class="font-size-32 font-titles color-title mb-4">Tablero de Vóley</h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Banquillo -->
+    <div class="lg:col-span-1">
+      <h2 class="font-size-20 font-subtitles color-subtitle mb-2">Banquillo</h2>
+
+      <div
+        cdkDropList
+        id="benchList"
+        [cdkDropListData]="(bench$ | async) ?? []"
+        [cdkDropListConnectedTo]="positionIds"
+        class="border border-color border-radius-15 p-3 background-white"
+      >
+        <div class="flex flex-col gap-2">
+          <div
+            *ngFor="let p of (bench$ | async) ?? []"
+            cdkDrag
+            (dblclick)="openStatsFor(p)"
+          >
+            <app-player-chip [player]="p"></app-player-chip>
+          </div>
+        </div>
+      </div>
+
+      <p class="font-size-12 color-pretitle mt-2">
+        Doble clic en una ficha para abrir estadísticas.
+      </p>
+    </div>
+
+    <!-- Campo -->
+    <div class="lg:col-span-2">
+      <h2 class="font-size-20 font-subtitles color-subtitle mb-2">
+        Campo (6 posiciones)
+      </h2>
+
+      <div class="volley-court">
+        <!-- capa de líneas -->
+        <div class="volley-court-lines"></div>
+
+        <!-- grid de posiciones -->
+        <div class="volley-positions-grid">
+          <ng-container *ngFor="let slot of (onCourt$ | async) ?? []; let idx = index">
+            <div
+              class="position-cell"
+              cdkDropList
+              [id]="'pos-' + idx"
+              [cdkDropListData]="slot ? [slot] : []"
+              [cdkDropListConnectedTo]="['benchList']"
+              (cdkDropListDropped)="dropToPosition($event, idx)"
+            >
+              <ng-container *ngIf="slot; else empty">
+                <div
+                  class="flex flex-col items-center gap-2"
+                  cdkDrag
+                  (dblclick)="openStatsFor(slot)"
+                >
+                  <app-player-chip [player]="slot"></app-player-chip>
+                  <button
+                    class="font-size-12 underline color-text"
+                    (click)="removeFromPosition(idx)"
+                    type="button"
+                  >
+                    Quitar
+                  </button>
+                </div>
+              </ng-container>
+
+              <ng-template #empty>
+                <span class="font-size-14 color-pretitle opacity-70">
+                  Posición {{ idx + 1 }}
+                </span>
+              </ng-template>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-stats-panel
+    *ngIf="selectedPlayer"
+    [open]="openStats"
+    [player]="selectedPlayer!"
+    [matchId]="matchId"
+    (close)="openStats = false"
+  ></app-stats-panel>
+</div>
