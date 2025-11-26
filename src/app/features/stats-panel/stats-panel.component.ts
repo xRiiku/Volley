@@ -17,7 +17,7 @@ export class StatsPanelComponent {
   @Input() matchId!: string;
   @Output() close = new EventEmitter<void>();
 
-  form!: FormGroup;
+  form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -26,17 +26,13 @@ export class StatsPanelComponent {
     this.form = this.fb.group({
       points: [0],
       aces: [0],
-      serve_errors: [0],
       attacks: [0],
-      kills: [0],
-      attack_errors: [0],
       blocks: [0],
-      block_errors: [0],
       digs: [0],
       receptions: [0],
-      reception_errors: [0],
       assists: [0],
-      set_errors: [0],
+      forced_errors: [0],
+      unforced_errors: [0],
     });
   }
 
@@ -48,5 +44,8 @@ export class StatsPanelComponent {
       player_id: this.player.id,
       ...this.form.value as any,
     });
+
+    // cerrar al guardar:
+    this.close.emit();
   }
 }

@@ -1,7 +1,13 @@
 export interface Match {
-  id: string;          // uuid
-  season: string;      // '2025-26'
-  jornada: number;     // 1..n
+  id: string;
+  season_id: string;
+  matchday: number;
   opponent: string;
-  date: string;        // ISO
+  match_date: string; // ISO YYYY-MM-DD
+  location: 'home' | 'away' | 'neutral';
+  match_type: 'league' | 'cup' | 'friendly' | 'other';
+  sets_for?: number | null;
+  sets_against?: number | null;
+  notes?: string | null;
+  created_at: string;
 }

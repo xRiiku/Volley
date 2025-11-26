@@ -3,7 +3,6 @@
   class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
   (click)="close.emit()"
 >
-  <!-- Contenedor del modal -->
   <div
     class="w-full max-w-xl bg-[var(--cl_background_white)] text-[var(--cl_text)] border border-[var(--cl_border)] border-radius-20 shadow-xl"
     (click)="$event.stopPropagation()"
@@ -31,7 +30,7 @@
       [formGroup]="form"
       (ngSubmit)="save()"
     >
-      <!-- fila 1 -->
+      <!-- ACCIONES POSITIVAS -->
       <label class="flex flex-col">
         Puntos
         <input
@@ -51,17 +50,7 @@
       </label>
 
       <label class="flex flex-col">
-        Err. saque
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
-          formControlName="serve_errors"
-        />
-      </label>
-
-      <!-- fila 2 -->
-      <label class="flex flex-col">
-        Ataques
+        Ataques totales
         <input
           type="number"
           class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
@@ -70,26 +59,7 @@
       </label>
 
       <label class="flex flex-col">
-        Kills
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
-          formControlName="kills"
-        />
-      </label>
-
-      <label class="flex flex-col">
-        Err. ataque
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
-          formControlName="attack_errors"
-        />
-      </label>
-
-      <!-- fila 3 -->
-      <label class="flex flex-col">
-        Bloqueos
+        Bloqueos totales
         <input
           type="number"
           class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
@@ -97,16 +67,6 @@
         />
       </label>
 
-      <label class="flex flex-col">
-        Err. bloqueo
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
-          formControlName="block_errors"
-        />
-      </label>
-
-      <!-- fila 4 -->
       <label class="flex flex-col">
         Defensas (digs)
         <input
@@ -117,7 +77,7 @@
       </label>
 
       <label class="flex flex-col">
-        Recepciones
+        Recepciones totales
         <input
           type="number"
           class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
@@ -125,16 +85,6 @@
         />
       </label>
 
-      <label class="flex flex-col">
-        Err. recepción
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
-          formControlName="reception_errors"
-        />
-      </label>
-
-      <!-- fila 5 -->
       <label class="flex flex-col">
         Asistencias
         <input
@@ -144,16 +94,26 @@
         />
       </label>
 
+      <!-- ERRORES GLOBALES -->
       <label class="flex flex-col">
-        Err. colocación
+        Errores forzados
         <input
           type="number"
           class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
-          formControlName="set_errors"
+          formControlName="forced_errors"
         />
       </label>
 
-      <!-- Botones -->
+      <label class="flex flex-col">
+        Errores no forzados
+        <input
+          type="number"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          formControlName="unforced_errors"
+        />
+      </label>
+
+      <!-- BOTONES -->
       <div class="col-span-2 flex gap-3 justify-end mt-3">
         <button
           type="submit"

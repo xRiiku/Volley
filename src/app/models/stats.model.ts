@@ -1,21 +1,19 @@
 export interface PlayerMatchStats {
-  id: string;           // uuid
-  match_id: string;     // FK Match
-  player_id: string;    // FK Player
-  // Métricas básicas de vóley a tiempo real:
+  id: number;
+  match_id: string;
+  player_id: string;
+
   points: number;
   aces: number;
-  serve_errors: number;
   attacks: number;
-  kills: number;
-  attack_errors: number;
   blocks: number;
-  block_errors: number;
   digs: number;
   receptions: number;
-  reception_errors: number;
   assists: number;
-  set_errors: number;
-  // Puedes ampliar luego con rotaciones/eficiencias.
-  updated_at: string;   // ISO
+
+  forced_errors: number;
+  unforced_errors: number;
+
+  created_at: string;
+  updated_at: string;
 }

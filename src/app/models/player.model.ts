@@ -1,6 +1,9 @@
 export interface Player {
-  id: string;          // uuid
+  id: string;
+  number: number;
   name: string;
-  number: number;      // dorsal
-  role?: 'OH'|'MB'|'OPP'|'S'|'L'|'DS'|string; // opcional
+  position?: 'S' | 'OH' | 'OPP' | 'MB' | 'L' | 'DS' | string;
+  is_active: boolean;
+  notes?: string | null;
+  created_at?: string;
 }

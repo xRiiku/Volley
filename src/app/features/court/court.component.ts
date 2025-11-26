@@ -7,6 +7,7 @@ import { PlayerChipComponent } from '../player-chip/player-chip.component';
 import { StatsPanelComponent } from '../stats-panel/stats-panel.component';
 import { SupabaseService } from '../../core/supabase/supabase.service';
 import { Player } from '../../models/player.model';
+import { environment } from '../../../environments/environments';
 
 @Component({
   selector: 'app-court',
@@ -16,17 +17,13 @@ import { Player } from '../../models/player.model';
   styleUrls: ['./court.component.scss']
 })
 export class CourtComponent implements OnInit, OnDestroy {
-  teamId = 'TEAM-DEFAULT';
-  matchId = 'MATCH-DEFAULT';
+  matchId = environment.defaultMatchId;
 
   openStats = false;
   selectedPlayer: Player | null = null;
 
   bench$!: BehaviorSubject<Player[]>;
   onCourt$!: BehaviorSubject<(Player | null)[]>;
-
-  // 👇 ids de las listas de posiciones para conectar drag & drop
-  positionIds = ['pos-0', 'pos-1', 'pos-2', 'pos-3', 'pos-4', 'pos-5'];
 
   private unsub: (() => void) | null = null;
 
@@ -36,7 +33,7 @@ export class CourtComponent implements OnInit, OnDestroy {
     this.bench$ = this.db.bench$;
     this.onCourt$ = this.db.onCourt$;
 
-    await this.db.loadPlayers(this.teamId);
+    await this.db.loadPlayers();
     this.unsub = this.db.subscribeStats(this.matchId, () => {});
   }
 
@@ -53,7 +50,6 @@ export class CourtComponent implements OnInit, OnDestroy {
     const sourceData = event.previousContainer.data as Player[];
     const dragged = sourceData[event.previousIndex];
 
-    // Si ya hay alguien en esa posición, vuelve al banquillo
     if (court[posIndex]) {
       bench.push(court[posIndex] as Player);
     }

@@ -1,16 +1,19 @@
 <div class="min-h-screen background-body p-6 font-page">
-  <h1 class="font-size-32 font-titles color-title mb-4">Tablero de Vóley</h1>
+  <h1 class="font-size-32 font-titles color-title mb-4">
+    Tablero de Vóley
+  </h1>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Banquillo -->
+    <!-- BANQUILLO -->
     <div class="lg:col-span-1">
-      <h2 class="font-size-20 font-subtitles color-subtitle mb-2">Banquillo</h2>
+      <h2 class="font-size-20 font-subtitles color-subtitle mb-2">
+        Banquillo
+      </h2>
 
       <div
         cdkDropList
         id="benchList"
         [cdkDropListData]="(bench$ | async) ?? []"
-        [cdkDropListConnectedTo]="positionIds"
         class="border border-color border-radius-15 p-3 background-white"
       >
         <div class="flex flex-col gap-2">
@@ -29,56 +32,61 @@
       </p>
     </div>
 
-    <!-- Campo -->
+    <!-- CAMPO -->
     <div class="lg:col-span-2">
       <h2 class="font-size-20 font-subtitles color-subtitle mb-2">
-        Campo (6 posiciones)
+        Campo
       </h2>
 
-      <div class="volley-court">
-        <!-- capa de líneas -->
-        <div class="volley-court-lines"></div>
+      <div class="court-wrapper">
+        <!-- Fondo madera -->
+        <div class="court-wood">
+          <!-- Rectángulo de la pista -->
+          <div class="court-rect">
+            <!-- Columnas interiores tipo imagen -->
+            <div class="court-columns">
+              <div class="court-column"></div>
+              <div class="court-column"></div>
+              <div class="court-column"></div>
+            </div>
 
-        <!-- grid de posiciones -->
-        <div class="volley-positions-grid">
-          <ng-container *ngFor="let slot of (onCourt$ | async) ?? []; let idx = index">
-            <div
-              class="position-cell"
-              cdkDropList
-              [id]="'pos-' + idx"
-              [cdkDropListData]="slot ? [slot] : []"
-              [cdkDropListConnectedTo]="['benchList']"
-              (cdkDropListDropped)="dropToPosition($event, idx)"
-            >
-              <ng-container *ngIf="slot; else empty">
+            <!-- Red central + postes -->
+            <div class="court-net">
+              <div class="net-line"></div>
+              <div class="net-post net-post-top"></div>
+              <div class="net-post net-post-bottom"></div>
+            </div>
+
+            <!-- POSICIONES SOLO EN NUESTRO CAMPO (MITAD IZQUIERDA) -->
+            <div class="court-positions-grid">
+              <ng-container *ngFor="let slot of (onCourt$ | async) ?? []; let idx = index">
                 <div
-                  class="flex flex-col items-center gap-2"
-                  cdkDrag
-                  (dblclick)="openStatsFor(slot)"
+                  class="court-position-cell"
+                  cdkDropList
+                  [id]="'pos-' + idx"
+                  [cdkDropListData]="slot ? [slot] : []"
+                  [cdkDropListConnectedTo]="['benchList']"
+                  (cdkDropListDropped)="dropToPosition($event, idx)"
                 >
-                  <app-player-chip [player]="slot"></app-player-chip>
-                  <button
-                    class="font-size-12 underline color-text"
-                    (click)="removeFromPosition(idx)"
-                    type="button"
-                  >
-                    Quitar
-                  </button>
+                  <ng-container *ngIf="slot">
+                    <div
+                      cdkDrag
+                      (dblclick)="openStatsFor(slot)"
+                      class="flex flex-col items-center gap-1"
+                    >
+                      <app-player-chip [player]="slot"></app-player-chip>
+                    </div>
+                  </ng-container>
                 </div>
               </ng-container>
-
-              <ng-template #empty>
-                <span class="font-size-14 color-pretitle opacity-70">
-                  Posición {{ idx + 1 }}
-                </span>
-              </ng-template>
             </div>
-          </ng-container>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- MODAL DE ESTADÍSTICAS (con todos los stats, incluidos forced/unforced) -->
   <app-stats-panel
     *ngIf="selectedPlayer"
     [open]="openStats"
