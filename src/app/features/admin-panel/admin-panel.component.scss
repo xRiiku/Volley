@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.admin-panel-root {
+  width: 100%;
+}
+
+/* Seguridad: ningún control se sale del panel */
+.admin-panel-root input,
+.admin-panel-root select,
+.admin-panel-root textarea,
+.admin-panel-root button {
+  max-width: 100%;
+  box-sizing: border-box;
+}

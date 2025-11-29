@@ -1,1 +1,1 @@
-:host{display:inline-block}
+:host{display:inline-block}.player-chip{cursor:grab}.chip-circle{width:3rem;height:3rem;border-radius:999px;background-color:var(--cl_corp);color:var(--cl_text_light);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.15)}.chip-number{font-weight:var(--font-weight-600);font-size:var(--font-size-14)}.chip-name{margin-top:.25rem;font-size:var(--font-size-12);font-family:var(--font-text);color:var(--cl_text);text-align:center;max-width:5rem;word-break:break-word}

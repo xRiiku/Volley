@@ -1,7 +1,13 @@
-<div class="flex items-center gap-2 px-3 py-2 rounded-20 bg-whiteBg text-title shadow
-            border border-border cursor-grab select-none">
-  <div class="w-8 h-8 flex items-center justify-center rounded-full-var bg-corp text-textLight font-bold">
-    {{ player.number }}
+<div class="player-chip flex flex-col items-center gap-1">
+  <!-- CÍRCULO CON EL DORSAL -->
+  <div class="chip-circle">
+    <span class="chip-number">
+      {{ player.number }}
+    </span>
   </div>
-  <div class="font-16 fontFamily text text-title">{{ player.name }}</div>
+
+  <!-- NOMBRE DEBAJO -->
+  <span class="chip-name">
+    {{ player.name }}
+  </span>
 </div>

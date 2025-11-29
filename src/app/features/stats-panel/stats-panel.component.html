@@ -24,13 +24,12 @@
       </button>
     </div>
 
-    <!-- FORMULARIO -->
+    <!-- FORM -->
     <form
       class="p-4 grid grid-cols-2 gap-3 text-[var(--cl_title)]"
       [formGroup]="form"
       (ngSubmit)="save()"
     >
-      <!-- ACCIONES POSITIVAS -->
       <label class="flex flex-col">
         Puntos
         <input
@@ -44,7 +43,7 @@
         Aces
         <input
           type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
           formControlName="aces"
         />
       </label>
@@ -53,7 +52,7 @@
         Ataques totales
         <input
           type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
           formControlName="attacks"
         />
       </label>
@@ -62,7 +61,7 @@
         Bloqueos totales
         <input
           type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
           formControlName="blocks"
         />
       </label>
@@ -71,7 +70,7 @@
         Defensas (digs)
         <input
           type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
           formControlName="digs"
         />
       </label>
@@ -80,7 +79,7 @@
         Recepciones totales
         <input
           type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
           formControlName="receptions"
         />
       </label>
@@ -89,17 +88,16 @@
         Asistencias
         <input
           type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
           formControlName="assists"
         />
       </label>
 
-      <!-- ERRORES GLOBALES -->
       <label class="flex flex-col">
         Errores forzados
         <input
           type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
           formControlName="forced_errors"
         />
       </label>
@@ -108,13 +106,12 @@
         Errores no forzados
         <input
           type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
+          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
           formControlName="unforced_errors"
         />
       </label>
 
-      <!-- BOTONES -->
-      <div class="col-span-2 flex gap-3 justify-end mt-3">
+      <div class="col-span-2 flex justify-end gap-3 mt-3">
         <button
           type="submit"
           class="px-4 py-2 rounded-15 bg-[var(--cl_corp)] text-[var(--cl_text_light)] hover:bg-[var(--cl_corp_hover)]"

@@ -9,7 +9,7 @@ import { SupabaseService } from '../../core/supabase/supabase.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './stats-panel.component.html',
-  styleUrls: ['./stats-panel.component.scss']
+  styleUrls: ['./stats-panel.component.scss'],
 })
 export class StatsPanelComponent {
   @Input() open = false;
@@ -19,10 +19,7 @@ export class StatsPanelComponent {
 
   form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private db: SupabaseService
-  ) {
+  constructor(private fb: FormBuilder, private db: SupabaseService) {
     this.form = this.fb.group({
       points: [0],
       aces: [0],
@@ -42,10 +39,10 @@ export class StatsPanelComponent {
     await this.db.upsertStats({
       match_id: this.matchId,
       player_id: this.player.id,
-      ...this.form.value as any,
+      ...this.form.value,
     });
 
-    // cerrar al guardar:
-    this.close.emit();
+    // Si quieres cerrar al guardar:
+    // this.close.emit();
   }
 }
