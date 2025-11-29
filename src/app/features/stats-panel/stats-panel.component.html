@@ -1,129 +1,77 @@
 <div
-  *ngIf="player && open"
-  class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
+  class="stats-backdrop"
+  [class.hidden]="!open"
   (click)="close.emit()"
 >
-  <div
-    class="w-full max-w-xl bg-[var(--cl_background_white)] text-[var(--cl_text)] border border-[var(--cl_border)] border-radius-20 shadow-xl"
-    (click)="$event.stopPropagation()"
-  >
+  <div class="stats-dialog" (click)="$event.stopPropagation()">
     <!-- CABECERA -->
-    <div
-      class="p-4 border-b border-[var(--cl_border)] flex justify-between items-center bg-[var(--cl_corp)] text-[var(--cl_text_light)]"
-    >
-      <h3 class="font-titles text-[var(--font-size-20)]">
-        Estadísticas · {{ player.name }} (#{{ player.number }})
+    <div class="stats-header">
+      <h3>
+        Estadísticas · {{ player?.name }} (#{{ player?.number }})
       </h3>
-
-      <button
-        type="button"
-        (click)="close.emit()"
-        class="px-3 py-1 border-radius-10 bg-[var(--cl_corp2)] text-[var(--cl_background_dark)] hover:bg-[var(--cl_corp2_hover)]"
-      >
+      <button type="button" class="btn-secondary" (click)="close.emit()">
         Cerrar
       </button>
     </div>
 
     <!-- FORM -->
-    <form
-      class="p-4 grid grid-cols-2 gap-3 text-[var(--cl_title)]"
-      [formGroup]="form"
-      (ngSubmit)="save()"
-    >
-      <label class="flex flex-col">
-        Puntos
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1 bg-[var(--cl_background_white)] text-[var(--cl_text)]"
-          formControlName="points"
-        />
+    <form class="stats-form" [formGroup]="form" (ngSubmit)="save()">
+      <!-- fila 1 -->
+      <label class="field">
+        <span>Puntos</span>
+        <input type="number" formControlName="points" />
       </label>
 
-      <label class="flex flex-col">
-        Aces
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
-          formControlName="aces"
-        />
+      <label class="field">
+        <span>Aces</span>
+        <input type="number" formControlName="aces" />
       </label>
 
-      <label class="flex flex-col">
-        Ataques totales
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
-          formControlName="attacks"
-        />
+      <!-- fila 2 -->
+      <label class="field">
+        <span>Ataques</span>
+        <input type="number" formControlName="attacks" />
       </label>
 
-      <label class="flex flex-col">
-        Bloqueos totales
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
-          formControlName="blocks"
-        />
+      <label class="field">
+        <span>Bloqueos</span>
+        <input type="number" formControlName="blocks" />
       </label>
 
-      <label class="flex flex-col">
-        Defensas (digs)
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
-          formControlName="digs"
-        />
+      <!-- fila 3 -->
+      <label class="field">
+        <span>Defensas (digs)</span>
+        <input type="number" formControlName="digs" />
       </label>
 
-      <label class="flex flex-col">
-        Recepciones totales
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
-          formControlName="receptions"
-        />
+      <label class="field">
+        <span>Recepciones</span>
+        <input type="number" formControlName="receptions" />
       </label>
 
-      <label class="flex flex-col">
-        Asistencias
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
-          formControlName="assists"
-        />
+      <!-- fila 4 -->
+      <label class="field">
+        <span>Asistencias</span>
+        <input type="number" formControlName="assists" />
       </label>
 
-      <label class="flex flex-col">
-        Errores forzados
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
-          formControlName="forced_errors"
-        />
+      <label class="field">
+        <span>Errores forzados (global)</span>
+        <input type="number" formControlName="forced_errors" />
       </label>
 
-      <label class="flex flex-col">
-        Errores no forzados
-        <input
-          type="number"
-          class="border border-[var(--cl_border)] rounded-10 px-2 py-1"
-          formControlName="unforced_errors"
-        />
+      <!-- fila 5 -->
+      <label class="field field-full">
+        <span>Errores no forzados (global)</span>
+        <input type="number" formControlName="unforced_errors" />
       </label>
 
-      <div class="col-span-2 flex justify-end gap-3 mt-3">
-        <button
-          type="submit"
-          class="px-4 py-2 rounded-15 bg-[var(--cl_corp)] text-[var(--cl_text_light)] hover:bg-[var(--cl_corp_hover)]"
-        >
+      <!-- BOTONES -->
+      <div class="actions">
+        <button type="submit" class="btn-primary">
           Guardar
         </button>
-
-        <button
-          type="button"
-          class="px-4 py-2 rounded-15 bg-[var(--cl_background_gray)] text-[var(--cl_title)] border border-[var(--cl_border)]"
-          (click)="close.emit()"
-        >
+        <button type="button" class="btn-secondary" (click)="close.emit()">
           Cancelar
         </button>
       </div>

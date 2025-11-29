@@ -6,11 +6,11 @@ export interface Match {
   season_id: string;
   matchday: number;
   opponent: string;
-  match_date: string; // YYYY-MM-DD
+  match_date: string; // 'YYYY-MM-DD'
   location: MatchLocation;
   match_type: MatchType;
   sets_for: number | null;
   sets_against: number | null;
-  notes?: string | null;
-  created_at?: string;
+  notes: string | null;
+  created_at: string;
 }
