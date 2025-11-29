@@ -108,25 +108,23 @@ export class CourtComponent implements OnInit, OnDestroy {
     this.onCourt$.next(court);
   }
 
-  // ---------- ROTACIONES ----------
+    // ---------- ROTACIONES ----------
 
   /**
-   * Rotar jugadoras como en vóley REAL (sentido horario)
-   * Mapeo de índices:
-   *  idx0 -> zona 4  (delante-izquierda)
-   *  idx1 -> zona 3  (delante-centro)
-   *  idx2 -> zona 2  (delante-derecha)
-   *  idx3 -> zona 5  (atrás-izquierda)
-   *  idx4 -> zona 6  (atrás-centro)
-   *  idx5 -> zona 1  (atrás-derecha, zona de saque)
+   * Rotar jugadoras como en tu layout actual:
+   * Índices en media pista (3 filas x 2 columnas):
    *
-   * Ciclo de rotación: 1→6→5→4→3→2→1  => índices [5,4,3,0,1,2]
+   *  idx0  idx1
+   *  idx2  idx3
+   *  idx4  idx5
+   *
+   * Ciclo derecha (clockwise):
+   * 1 → 3 → 5 → 4 → 2 → 0 → 1
    */
   rotateRight() {
     const court = [...this.onCourt$.value];
-    const cycle = [5, 4, 3, 0, 1, 2];
+    const cycle = [1, 3, 5, 4, 2, 0];
 
-    // Rotación sentido horario (clockwise)
     const last = court[cycle[cycle.length - 1]];
     for (let i = cycle.length - 1; i > 0; i--) {
       court[cycle[i]] = court[cycle[i - 1]];
@@ -137,11 +135,12 @@ export class CourtComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Rotación en sentido contrario (antihorario)
+   * Rotación en sentido contrario (izquierda / anticlockwise):
+   * 1 ← 3 ← 5 ← 4 ← 2 ← 0 ← 1
    */
   rotateLeft() {
     const court = [...this.onCourt$.value];
-    const cycle = [5, 4, 3, 0, 1, 2];
+    const cycle = [1, 3, 5, 4, 2, 0];
 
     const first = court[cycle[0]];
     for (let i = 0; i < cycle.length - 1; i++) {
@@ -151,6 +150,7 @@ export class CourtComponent implements OnInit, OnDestroy {
 
     this.onCourt$.next(court);
   }
+
 
   // ---------- STATS PANEL ----------
 

@@ -36,7 +36,7 @@
   overflow: hidden;
 }
 
-/* columnas interiores */
+/* columnas interiores (marcan zonas laterales) */
 .court-columns {
   position: absolute;
   inset: 0;
@@ -90,16 +90,21 @@
   bottom: -14px;
 }
 
-/* solo mitad izquierda dropeable */
+/* POSICIONES EN MEDIA PISTA: 3 filas x 2 columnas
+   Distribución visual:
+   idx0 idx1
+   idx2 idx3
+   idx4 idx5
+*/
 .court-positions-grid {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  right: 50%;
+  right: 50%; /* solo nuestra mitad de campo */
   display: grid;
-  grid-template-rows: repeat(2, 1fr);
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);   /* 3 filas */
+  grid-template-columns: repeat(2, 1fr); /* 2 columnas */
 }
 
 .court-position-cell {
