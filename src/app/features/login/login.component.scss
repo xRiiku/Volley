@@ -1,0 +1,108 @@
+.login-page {
+  min-height: 100vh;
+  background-color: var(--cl_background_body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--cl_background_white);
+  border-radius: var(--border-radius-20);
+  border: 1px solid var(--cl_border);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  padding: 24px 24px 20px;
+  font-family: var(--font-page);
+}
+
+.login-title {
+  font-family: var(--font-titles);
+  font-size: var(--font-size-24);
+  color: var(--cl_title);
+  margin-bottom: 4px;
+}
+
+.login-subtitle {
+  font-family: var(--font-subtitles);
+  font-size: var(--font-size-14);
+  color: var(--cl_pretitle);
+  margin-bottom: 16px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--font-size-14);
+  color: var(--cl_title);
+}
+
+.field span {
+  font-family: var(--font-subtitles);
+}
+
+.field input {
+  border: 1px solid var(--cl_border);
+  border-radius: var(--border-radius-10);
+  padding: 6px 10px;
+  font: inherit;
+  color: var(--cl_text);
+  background-color: var(--cl_background_white);
+}
+
+.btn-primary {
+  margin-top: 4px;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-15);
+  border: 1px solid var(--cl_corp_hover);
+  background-color: var(--cl_corp);
+  color: var(--cl_text_light);
+  font-size: var(--font-size-14);
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-primary:not(:disabled):hover {
+  background-color: var(--cl_corp_hover);
+}
+
+.login-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.link {
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: var(--font-size-12);
+  color: var(--cl_corp);
+  cursor: pointer;
+  text-align: left;
+}
+
+.link:hover {
+  color: var(--cl_corp_hover);
+  text-decoration: underline;
+}
+
+.login-message {
+  font-size: var(--font-size-12);
+  color: var(--cl_pretitle_hover);
+}

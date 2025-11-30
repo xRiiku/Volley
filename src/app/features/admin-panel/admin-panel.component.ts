@@ -1,3 +1,4 @@
+import { AuthService } from '../../core/auth/auth.service';
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -39,6 +40,17 @@ export class AdminPanelComponent {
   editingPlayer: Player | null = null;
   editingSeason: Season | null = null;
   editingMatch: Match | null = null;
+
+  auth = inject(AuthService);
+
+  async logout() {
+    try {
+      await this.auth.signOut();
+    } catch (err) {
+      console.error('Error al cerrar sesión', err);
+    }
+  }
+
 
   constructor() {
     this.playerForm = this.fb.group({
