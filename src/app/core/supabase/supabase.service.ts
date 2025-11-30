@@ -187,22 +187,26 @@ export class SupabaseService {
     await this.loadPlayers();
   }
 
-  async deletePlayer(id: string) {
-    const { error } = await supabase.from('players').delete().eq('id', id);
+async deletePlayer(id: string) {
+  // En lugar de borrar, marcamos como inactiva
+  const { error } = await supabase
+    .from('players')
+    .update({ is_active: false })
+    .eq('id', id);
 
-    if (error) {
-      console.error('Error borrando jugadora', error);
-      throw error;
-    }
-
-    // quitamos también de onCourt y bench en memoria
-    const court = this.onCourt$.value.map(p =>
-      p && p.id === id ? null : p
-    );
-    this.onCourt$.next(court);
-
-    await this.loadPlayers();
+  if (error) {
+    console.error('Error marcando jugadora inactiva', error);
+    throw error;
   }
+
+  // La sacamos del campo y del banquillo en memoria
+  const court = this.onCourt$.value.map(p =>
+    p && p.id === id ? null : p
+  );
+  this.onCourt$.next(court);
+
+  await this.loadPlayers();
+}
 
   // ========================================
   // CRUD TEMPORADAS
@@ -439,4 +443,40 @@ export class SupabaseService {
       throw error;
     }
   }
+
+  // ================== HISTÓRICO DE ESTADÍSTICAS ==================
+
+/** Stats de una jugadora por partido dentro de una temporada */
+async getPlayerStatsByMatches(playerId: string, seasonId: string) {
+  const { data, error } = await supabase
+    .from('v_player_stats_by_match')
+    .select('*')
+    .eq('player_id', playerId)
+    .eq('season_id', seasonId)
+    .order('matchday', { ascending: true });
+
+  if (error) {
+    console.error('Error obteniendo stats por partido', error);
+    throw error;
+  }
+
+  return data;
+}
+
+/** Resumen de stats de una jugadora por temporada */
+async getPlayerStatsBySeason(playerId: string) {
+  const { data, error } = await supabase
+    .from('v_player_stats_by_season')
+    .select('*')
+    .eq('player_id', playerId)
+    .order('season_name', { ascending: true });
+
+  if (error) {
+    console.error('Error obteniendo stats por temporada', error);
+    throw error;
+  }
+
+  return data;
+}
+
 }
