@@ -14,9 +14,8 @@
       </button>
     </div>
 
-    <!-- FORM -->
+    <!-- FORMULARIO DEL PARTIDO ACTUAL -->
     <form class="stats-form" [formGroup]="form" (ngSubmit)="save()">
-      <!-- fila 1 -->
       <label class="field">
         <span>Puntos</span>
         <input type="number" formControlName="points" />
@@ -27,7 +26,6 @@
         <input type="number" formControlName="aces" />
       </label>
 
-      <!-- fila 2 -->
       <label class="field">
         <span>Ataques</span>
         <input type="number" formControlName="attacks" />
@@ -38,7 +36,6 @@
         <input type="number" formControlName="blocks" />
       </label>
 
-      <!-- fila 3 -->
       <label class="field">
         <span>Defensas (digs)</span>
         <input type="number" formControlName="digs" />
@@ -49,24 +46,26 @@
         <input type="number" formControlName="receptions" />
       </label>
 
-      <!-- fila 4 -->
       <label class="field">
         <span>Asistencias</span>
         <input type="number" formControlName="assists" />
       </label>
 
       <label class="field">
-        <span>Errores forzados (global)</span>
+        <span>Errores forzados</span>
         <input type="number" formControlName="forced_errors" />
       </label>
 
-      <!-- fila 5 -->
       <label class="field field-full">
-        <span>Errores no forzados (global)</span>
+        <span>Errores no forzados</span>
         <input type="number" formControlName="unforced_errors" />
       </label>
 
-      <!-- BOTONES -->
+      <!-- Mensaje UI (por ejemplo cuando no hay partido seleccionado) -->
+      <p *ngIf="uiMessage" class="ui-message">
+        {{ uiMessage }}
+      </p>
+
       <div class="actions">
         <button type="submit" class="btn-primary">
           Guardar
@@ -76,5 +75,119 @@
         </button>
       </div>
     </form>
+
+    <!-- RESUMEN / HISTÓRICO -->
+    <div class="stats-summary">
+      <h4>Resumen temporada actual</h4>
+
+      <div *ngIf="loadingSummary" class="summary-loading">
+        Cargando estadísticas...
+      </div>
+
+      <div *ngIf="summaryError" class="summary-error">
+        {{ summaryError }}
+      </div>
+
+      <ng-container *ngIf="!loadingSummary && !summaryError">
+        <ng-container *ngIf="seasonSummary; else noSeasonData">
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Puntos</span>
+              <span class="summary-value">
+                {{ seasonSummary.total_points }}
+              </span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Aces</span>
+              <span class="summary-value">
+                {{ seasonSummary.total_aces }}
+              </span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Ataques</span>
+              <span class="summary-value">
+                {{ seasonSummary.total_attacks }}
+              </span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Bloqueos</span>
+              <span class="summary-value">
+                {{ seasonSummary.total_blocks }}
+              </span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Defensas</span>
+              <span class="summary-value">
+                {{ seasonSummary.total_digs }}
+              </span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Recepciones</span>
+              <span class="summary-value">
+                {{ seasonSummary.total_receptions }}
+              </span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Asistencias</span>
+              <span class="summary-value">
+                {{ seasonSummary.total_assists }}
+              </span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Err. forzados</span>
+              <span class="summary-value">
+                {{ seasonSummary.total_forced_errors }}
+              </span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Err. no forzados</span>
+              <span class="summary-value">
+                {{ seasonSummary.total_unforced_errors }}
+              </span>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #noSeasonData>
+          <p class="summary-empty">
+            No hay estadísticas registradas para esta temporada.
+          </p>
+        </ng-template>
+
+        <div class="summary-matches" *ngIf="matchHistory.length">
+          <h5>Partidos de la temporada</h5>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Jor.</th>
+                  <th>Fecha</th>
+                  <th>Rival</th>
+                  <th>Pts</th>
+                  <th>Ata</th>
+                  <th>Blo</th>
+                  <th>Def</th>
+                  <th>Err F.</th>
+                  <th>Err NF.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let m of matchHistory">
+                  <td>{{ m.matchday }}</td>
+                  <td>{{ m.match_date | date: 'dd/MM' }}</td>
+                  <td>{{ m.opponent }}</td>
+                  <td>{{ m.points }}</td>
+                  <td>{{ m.attacks }}</td>
+                  <td>{{ m.blocks }}</td>
+                  <td>{{ m.digs }}</td>
+                  <td>{{ m.forced_errors }}</td>
+                  <td>{{ m.unforced_errors }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+    </div>
   </div>
 </div>

@@ -2,33 +2,36 @@
   display: block;
 }
 
-/* capa oscura a pantalla completa */
+/* pantalla completa oscura */
 .stats-backdrop {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background-color: rgba(25, 49, 75, 0.8); // basado en --cl_background_dark
+  background-color: rgba(25, 49, 75, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* oculto cuando no está abierto */
 .stats-backdrop.hidden {
   display: none;
 }
 
-/* cuadro central */
+/* cuadro principal */
 .stats-dialog {
   width: 100%;
-  max-width: 720px;
+  max-width: 900px;
+  max-height: 90vh;
   background-color: var(--cl_background_white);
   border-radius: var(--border-radius-15);
   border: 1px solid var(--cl_border);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+  overflow-y: auto;
   font-family: var(--font-page);
+  display: flex;
+  flex-direction: column;
 }
+
 
 /* cabecera */
 .stats-header {
@@ -42,7 +45,7 @@
   font-size: var(--font-size-18);
 }
 
-/* formulario */
+/* formulario principal */
 .stats-form {
   padding: 16px;
   display: grid;
@@ -50,6 +53,7 @@
   gap: 12px 16px;
   font-size: var(--font-size-14);
   color: var(--cl_title);
+  border-bottom: 1px solid var(--cl_border);
 }
 
 .field {
@@ -65,20 +69,28 @@
 .field input {
   border: 1px solid var(--cl_border);
   border-radius: var(--border-radius-10);
-  padding: 4px 8px;
+  padding: 6px 8px;
   font: inherit;
   color: var(--cl_text);
-  background-color: var(--cl_background_white);
 }
 
 .field-full {
   grid-column: 1 / -1;
 }
 
-/* botones */
+/* mensaje UI */
+.ui-message {
+  grid-column: 1 / -1;
+  font-size: var(--font-size-12);
+  color: var(--cl_pretitle_hover);
+  margin-top: -4px;
+  margin-bottom: -4px;
+}
+
+/* botones form */
 .actions {
   grid-column: 1 / -1;
-  margin-top: 8px;
+  margin-top: 10px;
   display: flex;
   justify-content: flex-end;
   gap: 8px;
@@ -89,8 +101,8 @@
   padding: 8px 16px;
   border-radius: var(--border-radius-15);
   border: 1px solid transparent;
-  font-size: var(--font-size-14);
   cursor: pointer;
+  font-size: var(--font-size-14);
 }
 
 .btn-primary {
@@ -106,17 +118,108 @@
 .btn-secondary {
   background-color: var(--cl_background_gray);
   color: var(--cl_title);
-  border-color: var(--cl_border);
+  border: 1px solid var(--cl_border);
 }
 
 .btn-secondary:hover {
   background-color: #ddd;
 }
 
-/* responsive: en pantallas pequeñas, 1 columna */
+/* sección de resumen */
+.stats-summary {
+  padding: 16px;
+  background-color: #faf7f2;
+  font-size: var(--font-size-13);
+}
+
+.stats-summary h4 {
+  margin: 0 0 8px;
+  font-family: var(--font-titles);
+  color: var(--cl_title);
+}
+
+/* estados */
+.summary-loading,
+.summary-error,
+.summary-empty {
+  font-family: var(--font-subtitles);
+  color: var(--cl_pretitle);
+}
+
+/* totales temporada */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 16px;
+  margin-bottom: 12px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-label {
+  font-family: var(--font-subtitles);
+  color: var(--cl_pretitle);
+  font-size: var(--font-size-12);
+}
+
+.summary-value {
+  font-family: var(--font-titles);
+  color: var(--cl_title);
+  font-size: var(--font-size-14);
+}
+
+.summary-matches {
+  margin-top: 18px;
+}
+
+.summary-matches h5 {
+  margin-bottom: 6px;
+  font-family: var(--font-subtitles);
+  color: var(--cl_subtitle);
+}
+
+/* tabla */
+.table-wrapper {
+  max-height: 220px;
+  overflow-y: auto;
+  border-radius: var(--border-radius-10);
+  border: 1px solid var(--cl_border);
+  background-color: var(--cl_background_white);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--cl_border);
+  text-align: center;
+  font-size: var(--font-size-12);
+}
+
+th {
+  background-color: var(--cl_background_gray);
+  font-family: var(--font-subtitles);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* responsive */
 @media (max-width: 640px) {
   .stats-form {
     grid-template-columns: 1fr;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .actions {
