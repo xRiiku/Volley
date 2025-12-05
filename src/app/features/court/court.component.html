@@ -56,7 +56,7 @@
                     <div
                       cdkDrag
                       [cdkDragData]="slot"
-                      (dblclick)="openStatsFor(slot)"
+                      (click)="openStatsFor(slot)"
                       class="flex flex-col items-center gap-1"
                     >
                       <app-player-chip [player]="slot"></app-player-chip>
@@ -89,7 +89,7 @@
                 *ngFor="let p of (bench$ | async) ?? []"
                 cdkDrag
                 [cdkDragData]="p"
-                (dblclick)="openStatsFor(p)"
+                (click)="openStatsFor(p)"
               >
                 <app-player-chip [player]="p"></app-player-chip>
               </div>
@@ -98,7 +98,7 @@
         </div>
 
         <p class="font-size-12 color-pretitle mt-2 text-center">
-          Doble clic en una ficha para editar estadísticas.
+          Clic en una ficha para editar estadísticas.
         </p>
       </section>
     </div>
