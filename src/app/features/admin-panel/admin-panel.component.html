@@ -1,32 +1,36 @@
 <div class="admin-panel-root flex flex-col gap-4">
-  <h2 class="font-size-20 font-titles color-title">
-    Panel de administración
-  </h2>
-  <button
-    type="button"
-    class="px-2 py-1 border border-color border-radius-10 background-white font-size-12"
-    (click)="logout()"
-  >
-    Cerrar sesión
-  </button>
+  <!-- CABECERA -->
+  <div class="flex items-start justify-between gap-2">
+    <div>
+      <h2 class="font-size-20 font-titles color-title">
+        Panel de administración
+      </h2>
+      <p class="font-size-12 font-pretitles color-pretitle mt-1">
+        Orden de trabajo:
+        <strong>1)</strong> Temporadas ·
+        <strong>2)</strong> Partidos ·
+        <strong>3)</strong> Jugadoras.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="px-2 py-1 border border-color border-radius-10 background-white font-size-12"
+      (click)="logout()"
+    >
+      Cerrar sesión
+    </button>
+  </div>
 
   <!-- TABS -->
   <div class="flex gap-2 mb-2">
-    <button
-      class="px-3 py-1 rounded-10 border border-color text-14 w-full text-center"
-      [class.background-corp]="activeTab === 'players'"
-      [class.color-text-light]="activeTab === 'players'"
-      (click)="setTab('players')"
-    >
-      Jugadoras
-    </button>
     <button
       class="px-3 py-1 rounded-10 border border-color text-14 w-full text-center"
       [class.background-corp]="activeTab === 'seasons'"
       [class.color-text-light]="activeTab === 'seasons'"
       (click)="setTab('seasons')"
     >
-      Temporadas
+      Paso 1 · Temporadas
     </button>
     <button
       class="px-3 py-1 rounded-10 border border-color text-14 w-full text-center"
@@ -34,131 +38,27 @@
       [class.color-text-light]="activeTab === 'matches'"
       (click)="setTab('matches')"
     >
-      Partidos
+      Paso 2 · Partidos
+    </button>
+    <button
+      class="px-3 py-1 rounded-10 border border-color text-14 w-full text-center"
+      [class.background-corp]="activeTab === 'players'"
+      [class.color-text-light]="activeTab === 'players'"
+      (click)="setTab('players')"
+    >
+      Paso 3 · Jugadoras
     </button>
   </div>
 
-  <!-- TAB JUGADORAS -->
-  <div *ngIf="activeTab === 'players'" class="flex flex-col gap-3">
-    <h3 class="font-size-16 font-subtitles color-subtitle">
-      Jugadoras
-    </h3>
-
-    <form
-      [formGroup]="playerForm"
-      (ngSubmit)="submitPlayer()"
-      class="flex flex-col gap-2 mb-3"
-    >
-      <div class="grid grid-cols-[80px,1fr] gap-2">
-        <input
-          type="number"
-          formControlName="number"
-          placeholder="Dorsal (número de camiseta)"
-          class="w-full border border-color rounded-10 px-2 py-1 text-14"
-        />
-        <input
-          type="text"
-          formControlName="name"
-          placeholder="Nombre de la jugadora"
-          class="w-full border border-color rounded-10 px-2 py-1 text-14"
-        />
-      </div>
-
-      <!-- POSICIÓN COMO SELECT -->
-      <select
-        formControlName="position"
-        class="w-full border border-color rounded-10 px-2 py-1 text-14"
-      >
-        <option value="">Posición natural (opcional)</option>
-        <option value="S">S – Colocadora</option>
-        <option value="OH">OH – Receptor / Outside</option>
-        <option value="OPP">OPP – Opuesta</option>
-        <option value="MB">MB – Central</option>
-        <option value="L">L – Líbero</option>
-        <option value="DS">DS – Def. specialist</option>
-      </select>
-
-      <textarea
-        formControlName="notes"
-        rows="2"
-        placeholder="Notas (lesiones, mano dominante, etc.)"
-        class="w-full border border-color rounded-10 px-2 py-1 text-14"
-      ></textarea>
-
-      <label class="flex items-center gap-2 text-14">
-        <input type="checkbox" formControlName="is_active" />
-        Activa en la plantilla
-      </label>
-
-      <div class="flex gap-2 justify-end">
-        <button
-          type="button"
-          class="px-3 py-1 rounded-10 border border-color text-14"
-          (click)="resetPlayerForm()"
-        >
-          Limpiar
-        </button>
-        <button
-          type="submit"
-          class="px-3 py-1 rounded-10 background-corp color-text-light text-14"
-        >
-          {{ editingPlayer ? 'Guardar cambios' : 'Crear jugadora' }}
-        </button>
-      </div>
-    </form>
-
-    <div class="border border-color rounded-10 max-h-64 overflow-auto">
-      <table class="w-full text-12">
-        <thead class="background-gray">
-          <tr>
-            <th class="px-2 py-1 text-left">#</th>
-            <th class="px-2 py-1 text-left">Nombre</th>
-            <th class="px-2 py-1 text-left">Posición</th>
-            <th class="px-2 py-1 text-left">Activa</th>
-            <th class="px-2 py-1 text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let p of players$ | async"
-            class="border-t border-color"
-          >
-            <td class="px-2 py-1">{{ p.number }}</td>
-            <td class="px-2 py-1">{{ p.name }}</td>
-            <td class="px-2 py-1">{{ p.position }}</td>
-            <td class="px-2 py-1">
-              {{ p.is_active ? 'Sí' : 'No' }}
-            </td>
-            <td class="px-2 py-1 text-right">
-              <button
-                class="text-12 mr-2 color-corp"
-                (click)="editPlayer(p)"
-              >
-                Editar
-              </button>
-              <button
-                class="text-12 text-red-600"
-                (click)="deletePlayer(p)"
-              >
-                Borrar
-              </button>
-            </td>
-          </tr>
-          <tr *ngIf="(players$ | async)?.length === 0">
-            <td class="px-2 py-2 text-center" colspan="5">
-              No hay jugadoras aún.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- TAB TEMPORADAS -->
+  <!-- TAB TEMPORADAS (PASO 1) -->
   <div *ngIf="activeTab === 'seasons'" class="flex flex-col gap-3">
     <h3 class="font-size-16 font-subtitles color-subtitle">
-      Temporadas
+      Paso 1 · Temporadas
     </h3>
+    <p class="font-size-12 color-pretitle">
+      Primero crea las temporadas (por ejemplo <strong>2024/2025</strong>).
+      Después podrás asociarles partidos y estadísticas.
+    </p>
 
     <form
       [formGroup]="seasonForm"
@@ -252,7 +152,8 @@
           </tr>
           <tr *ngIf="(seasons$ | async)?.length === 0">
             <td class="px-2 py-2 text-center" colspan="5">
-              No hay temporadas aún.
+              No hay temporadas aún. Crea al menos una para continuar con los
+              partidos.
             </td>
           </tr>
         </tbody>
@@ -260,161 +161,304 @@
     </div>
   </div>
 
-  <!-- TAB PARTIDOS -->
+  <!-- TAB PARTIDOS (PASO 2) -->
   <div *ngIf="activeTab === 'matches'" class="flex flex-col gap-3">
     <h3 class="font-size-16 font-subtitles color-subtitle">
-      Partidos
+      Paso 2 · Partidos
     </h3>
 
-    <form
-      [formGroup]="matchForm"
-      (ngSubmit)="submitMatch()"
-      class="flex flex-col gap-2 mb-3"
-    >
-      <select
-        formControlName="season_id"
-        class="w-full border border-color rounded-10 px-2 py-1 text-14"
-      >
-        <option value="">Selecciona temporada</option>
-        <option
-          *ngFor="let s of seasons$ | async"
-          [value]="s.id"
+    <ng-container *ngIf="(seasons$ | async) as seasons">
+      <ng-container *ngIf="seasons.length > 0; else noSeasonsYet">
+        <p class="font-size-12 color-pretitle">
+          Elige una temporada y da de alta todos los partidos (jornada, fecha,
+          rival, lugar y resultado). Cada partido pertenece siempre a una
+          temporada concreta.
+        </p>
+
+        <form
+          [formGroup]="matchForm"
+          (ngSubmit)="submitMatch()"
+          class="flex flex-col gap-2 mb-3"
         >
-          {{ s.name }}
-        </option>
-      </select>
-
-      <div class="grid grid-cols-[80px,1fr] gap-2">
-        <input
-          type="number"
-          formControlName="matchday"
-          placeholder="Jornada"
-          class="w-full border border-color rounded-10 px-2 py-1 text-14"
-        />
-        <input
-          type="date"
-          formControlName="match_date"
-          class="w-full border border-color rounded-10 px-2 py-1 text-14"
-        />
-      </div>
-
-      <input
-        type="text"
-        formControlName="opponent"
-        placeholder="Rival"
-        class="w-full border border-color rounded-10 px-2 py-1 text-14"
-      />
-
-      <div class="grid grid-cols-2 gap-2">
-        <select
-          formControlName="location"
-          class="w-full border border-color rounded-10 px-2 py-1 text-14"
-        >
-          <option value="home">Casa</option>
-          <option value="away">Fuera</option>
-          <option value="neutral">Neutral</option>
-        </select>
-
-        <select
-          formControlName="match_type"
-          class="w-full border border-color rounded-10 px-2 py-1 text-14"
-        >
-          <option value="league">Liga</option>
-          <option value="cup">Copa</option>
-          <option value="friendly">Amistoso</option>
-          <option value="other">Otro</option>
-        </select>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2">
-        <input
-          type="number"
-          formControlName="sets_for"
-          placeholder="Sets a favor"
-          class="w-full border border-color rounded-10 px-2 py-1 text-14"
-        />
-        <input
-          type="number"
-          formControlName="sets_against"
-          placeholder="Sets en contra"
-          class="w-full border border-color rounded-10 px-2 py-1 text-14"
-        />
-      </div>
-
-      <textarea
-        formControlName="notes"
-        rows="2"
-        placeholder="Notas"
-        class="w-full border border-color rounded-10 px-2 py-1 text-14"
-      ></textarea>
-
-      <div class="flex gap-2 justify-end">
-        <button
-          type="button"
-          class="px-3 py-1 rounded-10 border border-color text-14"
-          (click)="resetMatchForm()"
-        >
-          Limpiar
-        </button>
-        <button
-          type="submit"
-          class="px-3 py-1 rounded-10 background-corp color-text-light text-14"
-        >
-          {{ editingMatch ? 'Guardar cambios' : 'Crear partido' }}
-        </button>
-      </div>
-    </form>
-
-    <div class="border border-color rounded-10 max-h-64 overflow-auto">
-      <table class="w-full text-12">
-        <thead class="background-gray">
-          <tr>
-            <th class="px-2 py-1 text-left">Jor.</th>
-            <th class="px-2 py-1 text-left">Fecha</th>
-            <th class="px-2 py-1 text-left">Rival</th>
-            <th class="px-2 py-1 text-left">Res.</th>
-            <th class="px-2 py-1 text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let m of matches$ | async"
-            class="border-t border-color"
+          <select
+            formControlName="season_id"
+            class="w-full border border-color rounded-10 px-2 py-1 text-14"
           >
-            <td class="px-2 py-1">{{ m.matchday }}</td>
-            <td class="px-2 py-1">{{ m.match_date }}</td>
-            <td class="px-2 py-1">{{ m.opponent }}</td>
-            <td class="px-2 py-1">
-              {{ m.sets_for ?? '-' }} - {{ m.sets_against ?? '-' }}
-            </td>
-            <td class="px-2 py-1 text-right">
-              <button
-                class="text-12 mr-2 color-corp"
-                (click)="editMatch(m)"
+            <option value="">Selecciona temporada</option>
+            <option
+              *ngFor="let s of seasons"
+              [value]="s.id"
+            >
+              {{ s.name }}
+            </option>
+          </select>
+
+          <div class="grid grid-cols-[80px,1fr] gap-2">
+            <input
+              type="number"
+              formControlName="matchday"
+              placeholder="Jornada"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            />
+            <input
+              type="date"
+              formControlName="match_date"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            />
+          </div>
+
+          <input
+            type="text"
+            formControlName="opponent"
+            placeholder="Rival"
+            class="w-full border border-color rounded-10 px-2 py-1 text-14"
+          />
+
+          <div class="grid grid-cols-2 gap-2">
+            <select
+              formControlName="location"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            >
+              <option value="home">Casa</option>
+              <option value="away">Fuera</option>
+              <option value="neutral">Neutral</option>
+            </select>
+
+            <select
+              formControlName="match_type"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            >
+              <option value="league">Liga</option>
+              <option value="cup">Copa</option>
+              <option value="friendly">Amistoso</option>
+              <option value="other">Otro</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <input
+              type="number"
+              formControlName="sets_for"
+              placeholder="Sets a favor"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            />
+            <input
+              type="number"
+              formControlName="sets_against"
+              placeholder="Sets en contra"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            />
+          </div>
+
+          <textarea
+            formControlName="notes"
+            rows="2"
+            placeholder="Notas"
+            class="w-full border border-color rounded-10 px-2 py-1 text-14"
+          ></textarea>
+
+          <div class="flex gap-2 justify-end">
+            <button
+              type="button"
+              class="px-3 py-1 rounded-10 border border-color text-14"
+              (click)="resetMatchForm()"
+            >
+              Limpiar
+            </button>
+            <button
+              type="submit"
+              class="px-3 py-1 rounded-10 background-corp color-text-light text-14"
+            >
+              {{ editingMatch ? 'Guardar cambios' : 'Crear partido' }}
+            </button>
+          </div>
+        </form>
+
+        <div class="border border-color rounded-10 max-h-64 overflow-auto">
+          <table class="w-full text-12">
+            <thead class="background-gray">
+              <tr>
+                <th class="px-2 py-1 text-left">Jor.</th>
+                <th class="px-2 py-1 text-left">Fecha</th>
+                <th class="px-2 py-1 text-left">Rival</th>
+                <th class="px-2 py-1 text-left">Res.</th>
+                <th class="px-2 py-1 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let m of matches$ | async"
+                class="border-t border-color"
               >
-                Editar
-              </button>
-              <button
-                class="text-12 text-red-600 mr-2"
-                (click)="deleteMatch(m)"
+                <td class="px-2 py-1">{{ m.matchday }}</td>
+                <td class="px-2 py-1">{{ m.match_date }}</td>
+                <td class="px-2 py-1">{{ m.opponent }}</td>
+                <td class="px-2 py-1">
+                  {{ m.sets_for ?? '-' }} - {{ m.sets_against ?? '-' }}
+                </td>
+                <td class="px-2 py-1 text-right">
+                  <button
+                    class="text-12 mr-2 color-corp"
+                    (click)="editMatch(m)"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    class="text-12 text-red-600 mr-2"
+                    (click)="deleteMatch(m)"
+                  >
+                    Borrar
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="(matches$ | async)?.length === 0">
+                <td class="px-2 py-2 text-center" colspan="5">
+                  No hay partidos para la temporada seleccionada.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #noSeasonsYet>
+      <p class="font-size-12 color-pretitle">
+        Antes de crear partidos debes crear al menos una temporada en
+        <strong>Paso 1 · Temporadas</strong>.
+      </p>
+    </ng-template>
+  </div>
+
+  <!-- TAB JUGADORAS (PASO 3) -->
+  <div *ngIf="activeTab === 'players'" class="flex flex-col gap-3">
+    <h3 class="font-size-16 font-subtitles color-subtitle">
+      Paso 3 · Jugadoras
+    </h3>
+
+    <ng-container *ngIf="(matches$ | async) as matches">
+      <ng-container *ngIf="matches.length > 0; else noMatchesYet">
+        <p class="font-size-12 color-pretitle">
+          Da de alta todas las jugadoras de la plantilla. Después, al asignar
+          estadísticas, deberás seleccionar primero el partido correspondiente
+          (que ya estará vinculado a una temporada).
+        </p>
+
+        <form
+          [formGroup]="playerForm"
+          (ngSubmit)="submitPlayer()"
+          class="flex flex-col gap-2 mb-3"
+        >
+          <div class="grid grid-cols-[80px,1fr] gap-2">
+            <input
+              type="number"
+              formControlName="number"
+              placeholder="Dorsal (número de camiseta)"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            />
+            <input
+              type="text"
+              formControlName="name"
+              placeholder="Nombre de la jugadora"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            />
+          </div>
+
+          <select
+            formControlName="position"
+            class="w-full border border-color rounded-10 px-2 py-1 text-14"
+          >
+            <option value="">Posición natural (opcional)</option>
+            <option value="S">S – Colocadora</option>
+            <option value="OH">OH – Receptor / Outside</option>
+            <option value="OPP">OPP – Opuesta</option>
+            <option value="MB">MB – Central</option>
+            <option value="L">L – Líbero</option>
+            <option value="DS">DS – Def. specialist</option>
+          </select>
+
+          <textarea
+            formControlName="notes"
+            rows="2"
+            placeholder="Notas (lesiones, mano dominante, etc.)"
+            class="w-full border border-color rounded-10 px-2 py-1 text-14"
+          ></textarea>
+
+          <label class="flex items-center gap-2 text-14">
+            <input type="checkbox" formControlName="is_active" />
+            Activa en la plantilla
+          </label>
+
+          <div class="flex gap-2 justify-end">
+            <button
+              type="button"
+              class="px-3 py-1 rounded-10 border border-color text-14"
+              (click)="resetPlayerForm()"
+            >
+              Limpiar
+            </button>
+            <button
+              type="submit"
+              class="px-3 py-1 rounded-10 background-corp color-text-light text-14"
+            >
+              {{ editingPlayer ? 'Guardar cambios' : 'Crear jugadora' }}
+            </button>
+          </div>
+        </form>
+
+        <div class="border border-color rounded-10 max-h-64 overflow-auto">
+          <table class="w-full text-12">
+            <thead class="background-gray">
+              <tr>
+                <th class="px-2 py-1 text-left">#</th>
+                <th class="px-2 py-1 text-left">Nombre</th>
+                <th class="px-2 py-1 text-left">Posición</th>
+                <th class="px-2 py-1 text-left">Activa</th>
+                <th class="px-2 py-1 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let p of players$ | async"
+                class="border-t border-color"
               >
-                Borrar
-              </button>
-              <button
-                class="text-12"
-                (click)="selectMatchAsCurrent(m)"
-              >
-                Usar en tablero
-              </button>
-            </td>
-          </tr>
-          <tr *ngIf="(matches$ | async)?.length === 0">
-            <td class="px-2 py-2 text-center" colspan="5">
-              No hay partidos para la temporada seleccionada.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+                <td class="px-2 py-1">{{ p.number }}</td>
+                <td class="px-2 py-1">{{ p.name }}</td>
+                <td class="px-2 py-1">{{ p.position }}</td>
+                <td class="px-2 py-1">
+                  {{ p.is_active ? 'Sí' : 'No' }}
+                </td>
+                <td class="px-2 py-1 text-right">
+                  <button
+                    class="text-12 mr-2 color-corp"
+                    (click)="editPlayer(p)"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    class="text-12 text-red-600"
+                    (click)="deletePlayer(p)"
+                  >
+                    Borrar
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="(players$ | async)?.length === 0">
+                <td class="px-2 py-2 text-center" colspan="5">
+                  No hay jugadoras aún.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #noMatchesYet>
+      <p class="font-size-12 color-pretitle">
+        Antes de crear jugadoras debes tener al menos un partido creado en
+        <strong>Paso 2 · Partidos</strong>.
+      </p>
+    </ng-template>
   </div>
 </div>

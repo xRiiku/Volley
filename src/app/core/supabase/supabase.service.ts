@@ -138,57 +138,58 @@ export class SupabaseService {
   // CRUD JUGADORAS
   // ========================================
 
-  async createPlayer(payload: {
-    number: number;
-    name: string;
-    position?: string | null;
-    notes?: string | null;
-    is_active?: boolean;
-  }) {
-    const { error } = await supabase.from('players').insert({
+  // ================== JUGADORAS ==================
+
+async createPlayer(payload: {
+  number: number;
+  name: string;
+  position: string | null;
+  notes?: string | null;
+}) {
+  const { error } = await supabase.from('players').insert({
+    number: payload.number,
+    name: payload.name,
+    position: payload.position,
+    notes: payload.notes ?? null,
+    // is_active se pone a true por defecto en la BD
+  });
+
+  if (error) {
+    console.error('Error creando jugadora', error);
+    throw error;
+  }
+
+  await this.loadPlayers();
+}
+
+async updatePlayer(id: string, payload: {
+  number: number;
+  name: string;
+  position: string | null;
+  notes?: string | null;
+  is_active?: boolean;
+}) {
+  const { error } = await supabase
+    .from('players')
+    .update({
       number: payload.number,
       name: payload.name,
-      position: payload.position ?? null,
+      position: payload.position,
       notes: payload.notes ?? null,
-      is_active: payload.is_active ?? true,
-    });
+      ...(payload.is_active !== undefined ? { is_active: payload.is_active } : {})
+    })
+    .eq('id', id);
 
-    if (error) {
-      console.error('Error creando jugadora', error);
-      throw error;
-    }
-
-    await this.loadPlayers();
+  if (error) {
+    console.error('Error actualizando jugadora', error);
+    throw error;
   }
 
-  async updatePlayer(id: string, payload: {
-    number: number;
-    name: string;
-    position?: string | null;
-    notes?: string | null;
-    is_active?: boolean;
-  }) {
-    const { error } = await supabase
-      .from('players')
-      .update({
-        number: payload.number,
-        name: payload.name,
-        position: payload.position ?? null,
-        notes: payload.notes ?? null,
-        is_active: payload.is_active ?? true,
-      })
-      .eq('id', id);
+  await this.loadPlayers();
+}
 
-    if (error) {
-      console.error('Error actualizando jugadora', error);
-      throw error;
-    }
-
-    await this.loadPlayers();
-  }
-
+/** En lugar de borrar, marcamos como inactiva para conservar historial */
 async deletePlayer(id: string) {
-  // En lugar de borrar, marcamos como inactiva
   const { error } = await supabase
     .from('players')
     .update({ is_active: false })
@@ -199,10 +200,8 @@ async deletePlayer(id: string) {
     throw error;
   }
 
-  // La sacamos del campo y del banquillo en memoria
-  const court = this.onCourt$.value.map(p =>
-    p && p.id === id ? null : p
-  );
+  // La sacamos de la pista en memoria
+  const court = this.onCourt$.value.map((p) => (p && p.id === id ? null : p));
   this.onCourt$.next(court);
 
   await this.loadPlayers();
@@ -479,4 +478,34 @@ async getPlayerStatsBySeason(playerId: string) {
   return data;
 }
 
+async getAllSeasonsForStats() {
+  const { data, error } = await supabase
+    .from('seasons')
+    .select('id, name, start_date, end_date, is_current')
+    .order('start_date', { ascending: true });
+
+  if (error) {
+    console.error('Error getAllSeasonsForStats', error);
+    throw error;
+  }
+
+  return data ?? [];
+}
+
+async getMatchesBySeasonForStats(seasonId: string) {
+  const { data, error } = await supabase
+    .from('matches')
+    .select(
+      'id, season_id, matchday, match_date, opponent, location, match_type, sets_for, sets_against'
+    )
+    .eq('season_id', seasonId)
+    .order('matchday', { ascending: true });
+
+  if (error) {
+    console.error('Error getMatchesBySeasonForStats', error);
+    throw error;
+  }
+
+  return data ?? [];
+}
 }

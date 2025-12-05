@@ -14,7 +14,42 @@
       </button>
     </div>
 
-    <!-- FORMULARIO DEL PARTIDO ACTUAL -->
+    <!-- CONTEXTO: TEMPORADA + PARTIDO -->
+    <div class="stats-context">
+      <div class="context-field">
+        <label>
+          <span>Temporada</span>
+          <select
+            [(ngModel)]="selectedSeasonId"
+            (ngModelChange)="onSeasonChange($event)"
+          >
+            <option [ngValue]="null">Selecciona temporada</option>
+            <option *ngFor="let s of seasons" [ngValue]="s.id">
+              {{ s.name }}
+            </option>
+          </select>
+        </label>
+      </div>
+
+      <div class="context-field">
+        <label>
+          <span>Partido</span>
+          <select
+            [(ngModel)]="selectedMatchId"
+            (ngModelChange)="onMatchChange($event)"
+            [disabled]="!selectedSeasonId || matches.length === 0"
+          >
+            <option [ngValue]="null">Selecciona partido</option>
+            <option *ngFor="let m of matches" [ngValue]="m.id">
+              J{{ m.matchday }} ·
+              {{ m.match_date | date: 'dd/MM' }} · vs {{ m.opponent }}
+            </option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- FORMULARIO DEL PARTIDO SELECCIONADO -->
     <form class="stats-form" [formGroup]="form" (ngSubmit)="save()">
       <label class="field">
         <span>Puntos</span>
@@ -61,7 +96,7 @@
         <input type="number" formControlName="unforced_errors" />
       </label>
 
-      <!-- Mensaje UI (por ejemplo cuando no hay partido seleccionado) -->
+      <!-- Mensaje UI (falta temporada/partido, problemas de carga, etc.) -->
       <p *ngIf="uiMessage" class="ui-message">
         {{ uiMessage }}
       </p>
@@ -70,7 +105,11 @@
         <button type="submit" class="btn-primary">
           Guardar
         </button>
-        <button type="button" class="btn-secondary" (click)="close.emit()">
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="close.emit()"
+        >
           Cancelar
         </button>
       </div>
@@ -78,7 +117,7 @@
 
     <!-- RESUMEN / HISTÓRICO -->
     <div class="stats-summary">
-      <h4>Resumen temporada actual</h4>
+      <h4>Resumen temporada seleccionada</h4>
 
       <div *ngIf="loadingSummary" class="summary-loading">
         Cargando estadísticas...
