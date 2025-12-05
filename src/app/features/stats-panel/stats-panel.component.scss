@@ -1,228 +1,307 @@
-:host {
-  display: block;
-}
-
-/* pantalla completa oscura */
+/* Fondo del modal */
 .stats-backdrop {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background-color: rgba(25, 49, 75, 0.8);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding: 2rem 1rem;
+  background: rgba(0, 0, 0, 0.45);
 }
 
 .stats-backdrop.hidden {
   display: none;
 }
 
-/* cuadro principal */
+/* Caja principal */
 .stats-dialog {
-  width: 100%;
-  max-width: 900px;
-  max-height: 90vh;
+  width: min(980px, 100%);
+  max-height: calc(100vh - 4rem);
   background-color: var(--cl_background_white);
-  border-radius: var(--border-radius-15);
-  border: 1px solid var(--cl_border);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
-  overflow-y: auto;
-  font-family: var(--font-page);
+  border-radius: var(--border-radius-20);
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  font-family: var(--font-text);
 }
 
-
-/* cabecera */
+/* Cabecera azul */
 .stats-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  background-color: var(--cl_corp);
+  padding: 0.9rem 1.4rem;
+  background: linear-gradient(
+    135deg,
+    var(--cl_corp),
+    var(--cl_corp2)
+  );
   color: var(--cl_text_light);
-  font-family: var(--font-titles);
-  font-size: var(--font-size-18);
 }
 
-/* formulario principal */
+.stats-header h3 {
+  margin: 0;
+  font-size: var(--font-size-18);
+  font-family: var(--font-titles);
+  font-weight: var(--font-weight-600);
+}
+
+/* Botón cerrar */
+.btn-secondary {
+  border-radius: var(--border-radius-10);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--cl_text);
+  font-size: var(--font-size-13);
+  padding: 0.25rem 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Selección temporada/partido */
+.stats-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.9rem 1.4rem 0.4rem;
+  background-color: var(--cl_background_white);
+  border-bottom: 1px solid var(--cl_border);
+}
+
+.context-field {
+  flex: 1 1 220px;
+}
+
+.context-field label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: var(--font-size-12);
+  color: var(--cl_pretitle);
+}
+
+.context-field select {
+  border-radius: var(--border-radius-10);
+  border: 1px solid var(--cl_border);
+  padding: 0.35rem 0.5rem;
+  font-size: var(--font-size-14);
+  background-color: var(--cl_background_white);
+  color: var(--cl_text);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.context-field select:focus {
+  border-color: var(--cl_corp);
+  box-shadow: 0 0 0 1px rgba(74, 144, 226, 0.3);
+}
+
+/* Formulario */
 .stats-form {
-  padding: 16px;
+  padding: 1rem 1.4rem 0.3rem;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 16px;
-  font-size: var(--font-size-14);
-  color: var(--cl_title);
+  gap: 0.75rem 1rem;
   border-bottom: 1px solid var(--cl_border);
+}
+
+@media (min-width: 900px) {
+  .stats-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
+  font-size: var(--font-size-13);
+  color: var(--cl_title);
 }
 
 .field span {
-  font-family: var(--font-subtitles);
+  font-weight: var(--font-weight-500);
 }
 
 .field input {
-  border: 1px solid var(--cl_border);
   border-radius: var(--border-radius-10);
-  padding: 6px 8px;
-  font: inherit;
-  color: var(--cl_text);
+  border: 1px solid var(--cl_border);
+  padding: 0.3rem 0.5rem;
+  font-size: var(--font-size-14);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input:focus {
+  border-color: var(--cl_corp);
+  box-shadow: 0 0 0 1px rgba(74, 144, 226, 0.25);
 }
 
 .field-full {
   grid-column: 1 / -1;
 }
 
-/* mensaje UI */
+/* Mensaje aviso / error pequeño */
 .ui-message {
   grid-column: 1 / -1;
   font-size: var(--font-size-12);
-  color: var(--cl_pretitle_hover);
-  margin-top: -4px;
-  margin-bottom: -4px;
+  color: var(--cl_pretitle);
+  margin-top: 0.35rem;
 }
 
-/* botones form */
+/* Botones del formulario */
 .actions {
   grid-column: 1 / -1;
-  margin-top: 10px;
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-}
-
-.btn-primary,
-.btn-secondary {
-  padding: 8px 16px;
-  border-radius: var(--border-radius-15);
-  border: 1px solid transparent;
-  cursor: pointer;
-  font-size: var(--font-size-14);
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-bottom: 0.4rem;
 }
 
 .btn-primary {
+  border-radius: var(--border-radius-10);
+  border: 1px solid var(--cl_corp);
   background-color: var(--cl_corp);
   color: var(--cl_text_light);
-  border-color: var(--cl_corp_hover);
+  font-size: var(--font-size-13);
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  font-weight: var(--font-weight-500);
+  transition: background-color 0.15s ease, box-shadow 0.15s ease,
+    transform 0.05s ease;
 }
 
 .btn-primary:hover {
   background-color: var(--cl_corp_hover);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+  transform: translateY(-1px);
 }
 
-.btn-secondary {
-  background-color: var(--cl_background_gray);
-  color: var(--cl_title);
-  border: 1px solid var(--cl_border);
-}
-
-.btn-secondary:hover {
-  background-color: #ddd;
-}
-
-/* sección de resumen */
+/* Resumen temporada + tabla partidos */
 .stats-summary {
-  padding: 16px;
-  background-color: #faf7f2;
-  font-size: var(--font-size-13);
+  padding: 0.9rem 1.4rem 1rem;
+  background-color: var(--cl_background_body);
+  /* 👇 antes tenías overflow: hidden; que cortaba el scroll de .table-wrapper */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .stats-summary h4 {
-  margin: 0 0 8px;
-  font-family: var(--font-titles);
-  color: var(--cl_title);
-}
-
-/* estados */
-.summary-loading,
-.summary-error,
-.summary-empty {
-  font-family: var(--font-subtitles);
-  color: var(--cl_pretitle);
-}
-
-/* totales temporada */
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px 16px;
-  margin-bottom: 12px;
-}
-
-.summary-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.summary-label {
-  font-family: var(--font-subtitles);
-  color: var(--cl_pretitle);
-  font-size: var(--font-size-12);
-}
-
-.summary-value {
-  font-family: var(--font-titles);
-  color: var(--cl_title);
-  font-size: var(--font-size-14);
-}
-
-.summary-matches {
-  margin-top: 18px;
-}
-
-.summary-matches h5 {
-  margin-bottom: 6px;
+  margin: 0;
+  font-size: var(--font-size-16);
   font-family: var(--font-subtitles);
   color: var(--cl_subtitle);
 }
 
-/* tabla */
+.summary-loading,
+.summary-error {
+  font-size: var(--font-size-13);
+  color: var(--cl_pretitle);
+}
+
+.summary-error {
+  color: #d9534f;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem 1rem;
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.summary-item {
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--border-radius-10);
+  background-color: var(--cl_background_white);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.summary-label {
+  display: block;
+  font-size: var(--font-size-11);
+  color: var(--cl_pretitle);
+}
+
+.summary-value {
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-600);
+  color: var(--cl_title);
+}
+
+.summary-empty {
+  font-size: var(--font-size-12);
+  color: var(--cl_pretitle);
+}
+
+/* Tabla partidos */
+.summary-matches h5 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-600);
+  color: var(--cl_subtitle);
+}
+
 .table-wrapper {
-  max-height: 220px;
-  overflow-y: auto;
+  max-height: 220px;                /* un pelín más alta */
   border-radius: var(--border-radius-10);
   border: 1px solid var(--cl_border);
+  overflow-y: auto;                 /* 👈 scroll VERTICAL de la tabla */
+  overflow-x: hidden;
   background-color: var(--cl_background_white);
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+/* Scroll tabla */
+.table-wrapper::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-th,
-td {
-  padding: 4px 6px;
-  border-bottom: 1px solid var(--cl_border);
-  text-align: center;
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--cl_background_gray);
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--cl_corp);
+  border-radius: 999px;
+}
+
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
   font-size: var(--font-size-12);
 }
 
-th {
+.table-wrapper thead {
   background-color: var(--cl_background_gray);
-  font-family: var(--font-subtitles);
 }
 
-tr:last-child td {
-  border-bottom: none;
+.table-wrapper th,
+.table-wrapper td {
+  padding: 0.25rem 0.4rem;
+  text-align: left;
 }
 
-/* responsive */
-@media (max-width: 640px) {
-  .stats-form {
-    grid-template-columns: 1fr;
-  }
-
-  .summary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .actions {
-    justify-content: center;
-  }
+.table-wrapper tbody tr:nth-child(even) {
+  background-color: #fafafa;
 }

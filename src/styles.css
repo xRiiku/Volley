@@ -55,10 +55,17 @@
 }
 
 body {
-  margin: 0; padding: 0; box-sizing: border-box;
-  background-color: var(--cl_background_body);
-  color: var(--cl_text);
-  font-family: var(--font-page), Arial, sans-serif;
-  font-size: var(--font-size-16);
-  line-height: 1.6;
+  background: radial-gradient(circle at top, #ffffff 0, #f4f2ee 45%, #ece9e2 100%);
+}
+
+/* Para que app-root no pegue a los bordes */
+app-root {
+  display: block;
+  min-height: 100vh;
+}
+
+/* Botones genéricos dentro de la app: transiciones suaves */
+button {
+  transition: background-color 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.05s ease;
 }
