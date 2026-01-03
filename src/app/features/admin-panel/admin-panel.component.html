@@ -142,12 +142,6 @@
               >
                 Borrar
               </button>
-              <button
-                class="text-12"
-                (click)="selectSeasonForMatches(s.id)"
-              >
-                Ver partidos
-              </button>
             </td>
           </tr>
           <tr *ngIf="(seasons$ | async)?.length === 0">

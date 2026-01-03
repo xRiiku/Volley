@@ -206,14 +206,6 @@ export class AdminPanelComponent {
     }
   }
 
-  async selectSeasonForMatches(seasonId: string) {
-    try {
-      await this.db.selectSeason(seasonId);
-    } catch (err) {
-      console.error('Error seleccionando temporada', err);
-    }
-  }
-
   // =============================
   // PARTIDOS
   // =============================
