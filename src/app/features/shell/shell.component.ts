@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
-import { AuthService } from '../../core/auth/auth.service';
 import { GameLayoutComponent } from '../game-layout/game-layout.component';
 import { LoginComponent } from '../login/login.component';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-shell',
@@ -18,6 +18,6 @@ import { LoginComponent } from '../login/login.component';
     </ng-template>
   `,
 })
-export class AppShellComponent {
+export class ShellComponent {
   auth = inject(AuthService);
 }

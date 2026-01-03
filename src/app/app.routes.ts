@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { AppShellComponent } from './features/app-shell/app-shell.component';
 
 export const routes: Routes = [
   {
@@ -9,12 +8,9 @@ export const routes: Routes = [
         (m) => m.ResetPasswordComponent
       ),
   },
-
-  // Aquí está tu comportamiento actual (login embebido si no hay sesión)
   {
     path: '',
-    component: AppShellComponent,
+    loadComponent: () =>
+      import('./features/shell/shell.component').then((m) => m.ShellComponent),
   },
-
-  { path: '**', redirectTo: '' },
 ];
