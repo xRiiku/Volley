@@ -11,7 +11,8 @@ import { SupabaseService } from '../../core/supabase/supabase.service';
 import { Player } from '../../models/player.model';
 import { Season } from '../../models/season.model';
 import { Match } from '../../models/match.model';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-panel',
@@ -30,6 +31,12 @@ export class AdminPanelComponent {
   players$: Observable<Player[]> = this.db.players$;
   seasons$: Observable<Season[]> = this.db.seasons$;
   matches$: Observable<Match[]> = this.db.matches$;
+
+  /**
+   * ✅ Partidos filtrados por la temporada seleccionada en matchForm.season_id
+   * Esto es lo que usarás en la tabla para que no se mezclen temporadas.
+   */
+  filteredMatches$: Observable<Match[]>;
 
   // Formularios
   playerForm: FormGroup;
@@ -50,7 +57,6 @@ export class AdminPanelComponent {
       console.error('Error al cerrar sesión', err);
     }
   }
-
 
   constructor() {
     this.playerForm = this.fb.group({
@@ -79,6 +85,19 @@ export class AdminPanelComponent {
       sets_against: [null],
       notes: [null],
     });
+
+    // Observable del season_id seleccionado (incluye valor inicial)
+    const selectedSeasonId$ = this.matchForm
+      .get('season_id')!
+      .valueChanges.pipe(startWith(this.matchForm.get('season_id')!.value));
+
+    // ✅ Filtra los partidos por season_id seleccionado
+    this.filteredMatches$ = combineLatest([this.matches$, selectedSeasonId$]).pipe(
+      map(([matches, seasonId]) => {
+        if (!seasonId) return [];
+        return (matches ?? []).filter((m) => m.season_id === seasonId);
+      })
+    );
   }
 
   // =============================
@@ -237,7 +256,8 @@ export class AdminPanelComponent {
       match_date: String(v.match_date),
       location: String(v.location),
       match_type: String(v.match_type),
-      sets_for: v.sets_for !== null && v.sets_for !== '' ? Number(v.sets_for) : null,
+      sets_for:
+        v.sets_for !== null && v.sets_for !== '' ? Number(v.sets_for) : null,
       sets_against:
         v.sets_against !== null && v.sets_against !== ''
           ? Number(v.sets_against)

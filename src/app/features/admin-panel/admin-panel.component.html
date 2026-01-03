@@ -281,7 +281,7 @@
             </thead>
             <tbody>
               <tr
-                *ngFor="let m of matches$ | async"
+                *ngFor="let m of (filteredMatches$ | async)"
                 class="border-t border-color"
               >
                 <td class="px-2 py-1">{{ m.matchday }}</td>
@@ -305,7 +305,7 @@
                   </button>
                 </td>
               </tr>
-              <tr *ngIf="(matches$ | async)?.length === 0">
+              <tr *ngIf="((filteredMatches$ | async)?.length ?? 0) === 0">
                 <td class="px-2 py-2 text-center" colspan="5">
                   No hay partidos para la temporada seleccionada.
                 </td>
