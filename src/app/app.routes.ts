@@ -1,9 +1,20 @@
 import { Routes } from '@angular/router';
-import { GameLayoutComponent } from './features/game-layout/game-layout.component';
+import { AppShellComponent } from './features/app-shell/app-shell.component';
 
 export const routes: Routes = [
   {
-    path: '',
-    component: GameLayoutComponent,
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./features/reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent
+      ),
   },
+
+  // Aquí está tu comportamiento actual (login embebido si no hay sesión)
+  {
+    path: '',
+    component: AppShellComponent,
+  },
+
+  { path: '**', redirectTo: '' },
 ];

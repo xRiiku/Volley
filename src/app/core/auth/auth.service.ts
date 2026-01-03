@@ -74,10 +74,14 @@ export class AuthService {
   }
 
   /** Enviar email de recuperación de contraseña */
-  async resetPassword(email: string, redirectTo?: string) {
+  async resetPassword(email: string) {
+    const redirectTo = `${window.location.origin}/reset-password`;
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: redirectTo ?? window.location.origin,
+      redirectTo,
     });
+
     if (error) throw error;
   }
+
 }
