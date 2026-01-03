@@ -7,6 +7,23 @@
   width: 100%;
   display: flex;
   justify-content: center;
+
+  /* ✅ MÓVIL: si el campo necesita más ancho, permitimos scroll horizontal */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 6px; /* para que no se “coma” la scrollbar */
+}
+
+/* Opcional: scrollbar más discreta */
+.court-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+.court-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+.court-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 999px;
 }
 
 .court-wood {
@@ -15,15 +32,26 @@
   aspect-ratio: 2 / 1;
   padding: 16px;
   background: repeating-linear-gradient(
-      90deg,
-      #c37b37 0,
-      #c37b37 20px,
-      #bf7431 20px,
-      #bf7431 40px
-    );
+    90deg,
+    #c37b37 0,
+    #c37b37 20px,
+    #bf7431 20px,
+    #bf7431 40px
+  );
   display: flex;
   align-items: center;
   justify-content: center;
+
+  /* ✅ MÓVIL: evitamos que se haga demasiado estrecho y recorte fichas */
+  min-width: 360px;
+}
+
+/* En móviles muy estrechos, forzamos un ancho mínimo aún más cómodo */
+@media (max-width: 420px) {
+  .court-wood {
+    min-width: 420px; /* el campo puede ser más ancho que la pantalla */
+    padding: 12px;    /* un pelín menos de padding para ganar espacio útil */
+  }
 }
 
 .court-rect {
@@ -90,12 +118,7 @@
   bottom: -14px;
 }
 
-/* POSICIONES EN MEDIA PISTA: 3 filas x 2 columnas
-   Distribución visual:
-   idx0 idx1
-   idx2 idx3
-   idx4 idx5
-*/
+/* POSICIONES EN MEDIA PISTA: 3 filas x 2 columnas */
 .court-positions-grid {
   position: absolute;
   top: 0;
@@ -103,8 +126,8 @@
   left: 0;
   right: 50%; /* solo nuestra mitad de campo */
   display: grid;
-  grid-template-rows: repeat(3, 1fr);   /* 3 filas */
-  grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .court-position-cell {
