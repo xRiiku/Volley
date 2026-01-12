@@ -1,6 +1,9 @@
 <div class="player-chip flex flex-col items-center gap-1">
   <!-- CÍRCULO CON EL DORSAL -->
-  <div class="chip-circle">
+  <div
+    class="chip-circle"
+    [class.chip-circle--libero]="player.position === 'L'"
+  >
     <span class="chip-number">
       {{ player.number }}
     </span>
