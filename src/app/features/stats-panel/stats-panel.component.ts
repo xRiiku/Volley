@@ -204,6 +204,27 @@ export class StatsPanelComponent implements OnInit, OnChanges {
     await this.loadStats();
   }
 
+  // ================== STEPPER (+ / -) ==================
+
+  private clampNonNegative(n: number) {
+    return Math.max(0, n);
+  }
+
+  adjustStat(controlName: keyof typeof this.form.controls, delta: number) {
+    const ctrl = this.form.controls[controlName];
+    const current = Number(ctrl.value ?? 0);
+    const next = this.clampNonNegative(current + delta);
+    ctrl.setValue(next);
+  }
+
+  inc(controlName: keyof typeof this.form.controls) {
+    this.adjustStat(controlName, +1);
+  }
+
+  dec(controlName: keyof typeof this.form.controls) {
+    this.adjustStat(controlName, -1);
+  }
+
   // ================== STATS DEL PARTIDO ==================
 
   private resetStatsForm() {

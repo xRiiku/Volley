@@ -53,50 +53,167 @@
     <form class="stats-form" [formGroup]="form" (ngSubmit)="save()">
       <label class="field">
         <span>Puntos</span>
-        <input type="number" formControlName="points" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" (click)="dec('points')" aria-label="Restar puntos">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+          <input type="number" formControlName="points" class="stepper-input" />
+          <button type="button" class="stepper-btn" (click)="inc('points')" aria-label="Sumar puntos">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="12" y1="6" x2="12" y2="18"></line>
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <label class="field">
         <span>Aces</span>
-        <input type="number" formControlName="aces" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" (click)="dec('aces')" aria-label="Restar aces">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+          <input type="number" formControlName="aces" class="stepper-input" />
+          <button type="button" class="stepper-btn" (click)="inc('aces')" aria-label="Sumar aces">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="12" y1="6" x2="12" y2="18"></line>
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <label class="field">
         <span>Ataques</span>
-        <input type="number" formControlName="attacks" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" (click)="dec('attacks')" aria-label="Restar ataques">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+          <input type="number" formControlName="attacks" class="stepper-input" />
+          <button type="button" class="stepper-btn" (click)="inc('attacks')" aria-label="Sumar ataques">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="12" y1="6" x2="12" y2="18"></line>
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <label class="field">
         <span>Bloqueos</span>
-        <input type="number" formControlName="blocks" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" (click)="dec('blocks')" aria-label="Restar bloqueos">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+          <input type="number" formControlName="blocks" class="stepper-input" />
+          <button type="button" class="stepper-btn" (click)="inc('blocks')" aria-label="Sumar bloqueos">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="12" y1="6" x2="12" y2="18"></line>
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <label class="field">
         <span>Defensas (digs)</span>
-        <input type="number" formControlName="digs" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" (click)="dec('digs')" aria-label="Restar defensas">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+          <input type="number" formControlName="digs" class="stepper-input" />
+          <button type="button" class="stepper-btn" (click)="inc('digs')" aria-label="Sumar defensas">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="12" y1="6" x2="12" y2="18"></line>
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <label class="field">
         <span>Recepciones</span>
-        <input type="number" formControlName="receptions" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" (click)="dec('receptions')" aria-label="Restar recepciones">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+          <input type="number" formControlName="receptions" class="stepper-input" />
+          <button type="button" class="stepper-btn" (click)="inc('receptions')" aria-label="Sumar recepciones">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="12" y1="6" x2="12" y2="18"></line>
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <label class="field">
         <span>Asistencias</span>
-        <input type="number" formControlName="assists" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" (click)="dec('assists')" aria-label="Restar asistencias">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+          <input type="number" formControlName="assists" class="stepper-input" />
+          <button type="button" class="stepper-btn" (click)="inc('assists')" aria-label="Sumar asistencias">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="12" y1="6" x2="12" y2="18"></line>
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <label class="field">
         <span>Errores forzados</span>
-        <input type="number" formControlName="forced_errors" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" (click)="dec('forced_errors')" aria-label="Restar errores forzados">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+          <input type="number" formControlName="forced_errors" class="stepper-input" />
+          <button type="button" class="stepper-btn" (click)="inc('forced_errors')" aria-label="Sumar errores forzados">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="12" y1="6" x2="12" y2="18"></line>
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <label class="field field-full">
         <span>Errores no forzados</span>
-        <input type="number" formControlName="unforced_errors" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" (click)="dec('unforced_errors')" aria-label="Restar errores no forzados">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+          <input type="number" formControlName="unforced_errors" class="stepper-input" />
+          <button type="button" class="stepper-btn" (click)="inc('unforced_errors')" aria-label="Sumar errores no forzados">
+            <svg class="stepper-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="12" y1="6" x2="12" y2="18"></line>
+              <line x1="6" y1="12" x2="18" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       </label>
 
-      <!-- Mensaje UI (falta temporada/partido, problemas de carga, etc.) -->
+      <!-- Mensaje UI -->
       <p *ngIf="uiMessage" class="ui-message">
         {{ uiMessage }}
       </p>
