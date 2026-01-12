@@ -11,4 +11,5 @@ import { Player } from '../../models/player.model';
 })
 export class PlayerChipComponent {
   @Input() player!: Player;
+  @Input() isCaptain = false;
 }

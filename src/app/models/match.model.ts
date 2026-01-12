@@ -12,5 +12,6 @@ export interface Match {
   sets_for: number | null;
   sets_against: number | null;
   notes: string | null;
+  referee_id: string | null;
   created_at: string;
 }

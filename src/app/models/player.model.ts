@@ -6,6 +6,7 @@ export interface Player {
   name: string;
   position: VolleyballPosition;
   is_active: boolean;
+  is_captain: boolean;
   notes: string | null;
   created_at: string;
 }

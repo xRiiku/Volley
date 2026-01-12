@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { SupabaseService } from '../../core/supabase/supabase.service';
+import { SupabaseService, Referee } from '../../core/supabase/supabase.service';
 import { Player } from '../../models/player.model';
 import { Season } from '../../models/season.model';
 import { Match } from '../../models/match.model';
@@ -22,7 +22,6 @@ import { map, startWith } from 'rxjs/operators';
   styleUrls: ['./admin-panel.component.scss'],
 })
 export class AdminPanelComponent {
-  // Inyección usando inject() para evitar el warning de "db usado antes de inicializar"
   private db = inject(SupabaseService);
   private fb = inject(FormBuilder);
 
@@ -31,22 +30,21 @@ export class AdminPanelComponent {
   players$: Observable<Player[]> = this.db.players$;
   seasons$: Observable<Season[]> = this.db.seasons$;
   matches$: Observable<Match[]> = this.db.matches$;
+  referees$: Observable<Referee[]> = this.db.referees$;
 
-  /**
-   * ✅ Partidos filtrados por la temporada seleccionada en matchForm.season_id
-   * Esto es lo que usarás en la tabla para que no se mezclen temporadas.
-   */
   filteredMatches$: Observable<Match[]>;
 
   // Formularios
   playerForm: FormGroup;
   seasonForm: FormGroup;
   matchForm: FormGroup;
+  refereeForm: FormGroup;
 
   // Elementos en edición (null = creando nuevo)
   editingPlayer: Player | null = null;
   editingSeason: Season | null = null;
   editingMatch: Match | null = null;
+  editingReferee: Referee | null = null;
 
   auth = inject(AuthService);
 
@@ -59,14 +57,21 @@ export class AdminPanelComponent {
   }
 
   constructor() {
+    // =============================
+    // FORM JUGADORAS
+    // =============================
     this.playerForm = this.fb.group({
       number: [null, [Validators.required, Validators.min(1)]],
       name: ['', Validators.required],
-      position: [null], // volleyball_position opcional
+      position: [null],
       notes: [null],
       is_active: [true],
+      is_captain: [false], // ✅ NUEVO
     });
 
+    // =============================
+    // FORM TEMPORADAS
+    // =============================
     this.seasonForm = this.fb.group({
       name: ['', Validators.required],
       start_date: [null],
@@ -74,6 +79,9 @@ export class AdminPanelComponent {
       is_current: [false],
     });
 
+    // =============================
+    // FORM PARTIDOS
+    // =============================
     this.matchForm = this.fb.group({
       season_id: ['', Validators.required],
       matchday: [1, [Validators.required, Validators.min(1)]],
@@ -83,7 +91,18 @@ export class AdminPanelComponent {
       match_type: ['league', Validators.required],
       sets_for: [null],
       sets_against: [null],
+      referee_id: [null], // ✅ NUEVO
       notes: [null],
+    });
+
+    // =============================
+    // FORM ÁRBITROS
+    // =============================
+    this.refereeForm = this.fb.group({
+      name: ['', Validators.required],
+      license_number: [null],
+      notes: [null],
+      is_active: [true],
     });
 
     // Observable del season_id seleccionado (incluye valor inicial)
@@ -109,6 +128,33 @@ export class AdminPanelComponent {
   }
 
   // =============================
+  // HELPERS (para evitar casts en template)
+  // =============================
+
+  private getMatchRefereeId(m: Match): string | null {
+    const anyMatch = m as unknown as { referee_id?: string | null };
+    return anyMatch.referee_id ?? null;
+  }
+
+  private getPlayerIsCaptain(p: Player): boolean {
+    const anyPlayer = p as unknown as { is_captain?: boolean };
+    return !!anyPlayer.is_captain;
+  }
+
+  refereeName(referees: Referee[], refereeId: string | null) {
+    if (!refereeId) return '-';
+    return referees.find((r) => r.id === refereeId)?.name ?? '-';
+  }
+
+  matchRefereeName(referees: Referee[], m: Match) {
+    return this.refereeName(referees, this.getMatchRefereeId(m));
+  }
+
+  playerIsCaptain(p: Player) {
+    return this.getPlayerIsCaptain(p);
+  }
+
+  // =============================
   // JUGADORAS
   // =============================
 
@@ -120,6 +166,7 @@ export class AdminPanelComponent {
       position: null,
       notes: null,
       is_active: true,
+      is_captain: false,
     });
   }
 
@@ -134,6 +181,7 @@ export class AdminPanelComponent {
       position: (value.position as string) || null,
       notes: (value.notes as string) || null,
       is_active: !!value.is_active,
+      is_captain: !!value.is_captain,
     };
 
     try {
@@ -156,6 +204,7 @@ export class AdminPanelComponent {
       position: p.position,
       notes: p.notes,
       is_active: p.is_active,
+      is_captain: this.getPlayerIsCaptain(p),
     });
   }
 
@@ -165,6 +214,14 @@ export class AdminPanelComponent {
       await this.db.deletePlayer(p.id);
     } catch (err) {
       console.error('Error borrando jugadora', err);
+    }
+  }
+
+  async setCaptain(p: Player) {
+    try {
+      await this.db.setCaptain(p.id);
+    } catch (err) {
+      console.error('Error asignando capitán', err);
     }
   }
 
@@ -240,6 +297,7 @@ export class AdminPanelComponent {
       match_type: 'league',
       sets_for: null,
       sets_against: null,
+      referee_id: null,
       notes: null,
     });
   }
@@ -262,6 +320,7 @@ export class AdminPanelComponent {
         v.sets_against !== null && v.sets_against !== ''
           ? Number(v.sets_against)
           : null,
+      referee_id: v.referee_id ? String(v.referee_id) : null,
       notes: (v.notes as string) || null,
     };
 
@@ -288,6 +347,7 @@ export class AdminPanelComponent {
       match_type: m.match_type,
       sets_for: m.sets_for,
       sets_against: m.sets_against,
+      referee_id: this.getMatchRefereeId(m),
       notes: m.notes,
     });
   }
@@ -301,7 +361,60 @@ export class AdminPanelComponent {
     }
   }
 
-  selectMatchAsCurrent(m: Match) {
-    this.db.selectMatch(m.id);
+  // =============================
+  // ÁRBITROS
+  // =============================
+
+  resetRefereeForm() {
+    this.editingReferee = null;
+    this.refereeForm.reset({
+      name: '',
+      license_number: null,
+      notes: null,
+      is_active: true,
+    });
+  }
+
+  async submitReferee() {
+    if (this.refereeForm.invalid) return;
+
+    const v = this.refereeForm.value;
+
+    const payload = {
+      name: String(v.name),
+      license_number: (v.license_number as string) || null,
+      notes: (v.notes as string) || null,
+      is_active: !!v.is_active,
+    };
+
+    try {
+      if (this.editingReferee) {
+        await this.db.updateReferee(this.editingReferee.id, payload);
+      } else {
+        await this.db.createReferee(payload);
+      }
+      this.resetRefereeForm();
+    } catch (err) {
+      console.error('Error guardando árbitro', err);
+    }
+  }
+
+  editReferee(r: Referee) {
+    this.editingReferee = r;
+    this.refereeForm.setValue({
+      name: r.name,
+      license_number: r.license_number ?? null,
+      notes: r.notes ?? null,
+      is_active: !!r.is_active,
+    });
+  }
+
+  async deleteReferee(r: Referee) {
+    if (!confirm(`¿Eliminar árbitro "${r.name}"?`)) return;
+    try {
+      await this.db.deleteReferee(r.id);
+    } catch (err) {
+      console.error('Error borrando árbitro', err);
+    }
   }
 }

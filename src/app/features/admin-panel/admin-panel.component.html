@@ -38,7 +38,7 @@
       [class.color-text-light]="activeTab === 'matches'"
       (click)="setTab('matches')"
     >
-      Paso 2 · Crear Partido
+      Paso 2 · Crear Partido y árbitro
     </button>
     <button
       class="px-3 py-1 rounded-10 border border-color text-14 w-full text-center"
@@ -119,10 +119,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            *ngFor="let s of seasons$ | async"
-            class="border-t border-color"
-          >
+          <tr *ngFor="let s of seasons$ | async" class="border-t border-color">
             <td class="px-2 py-1">{{ s.name }}</td>
             <td class="px-2 py-1">{{ s.start_date }}</td>
             <td class="px-2 py-1">{{ s.end_date }}</td>
@@ -130,24 +127,17 @@
               {{ s.is_current ? 'Sí' : 'No' }}
             </td>
             <td class="px-2 py-1 text-right">
-              <button
-                class="text-12 mr-2 color-corp"
-                (click)="editSeason(s)"
-              >
+              <button class="text-12 mr-2 color-corp" (click)="editSeason(s)">
                 Editar
               </button>
-              <button
-                class="text-12 text-red-600 mr-2"
-                (click)="deleteSeason(s)"
-              >
+              <button class="text-12 text-red-600 mr-2" (click)="deleteSeason(s)">
                 Borrar
               </button>
             </td>
           </tr>
           <tr *ngIf="(seasons$ | async)?.length === 0">
             <td class="px-2 py-2 text-center" colspan="5">
-              No hay temporadas aún. Crea al menos una para continuar con los
-              partidos.
+              No hay temporadas aún. Crea al menos una para continuar con los partidos.
             </td>
           </tr>
         </tbody>
@@ -165,10 +155,100 @@
       <ng-container *ngIf="seasons.length > 0; else noSeasonsYet">
         <p class="font-size-12 color-pretitle">
           Elige una temporada y da de alta todos los partidos (jornada, fecha,
-          rival, lugar y resultado). Cada partido pertenece siempre a una
-          temporada concreta.
+          rival, lugar y resultado).
         </p>
 
+        <!-- ✅ GESTIÓN DE ÁRBITROS -->
+        <div class="border border-color rounded-10 p-3 flex flex-col gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <h4 class="font-size-14 font-subtitles color-subtitle">Árbitros</h4>
+            <p class="font-size-12 color-pretitle">
+              Crea árbitros aquí para poder seleccionarlos en los partidos.
+            </p>
+          </div>
+
+          <form
+            [formGroup]="refereeForm"
+            (ngSubmit)="submitReferee()"
+            class="flex flex-col gap-2"
+          >
+            <input
+              type="text"
+              formControlName="name"
+              placeholder="Nombre del árbitro"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            />
+
+            <input
+              type="text"
+              formControlName="license_number"
+              placeholder="Nº licencia (opcional)"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            />
+
+            <textarea
+              formControlName="notes"
+              rows="2"
+              placeholder="Notas (opcional)"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            ></textarea>
+
+            <label class="flex items-center gap-2 text-14">
+              <input type="checkbox" formControlName="is_active" />
+              Activo
+            </label>
+
+            <div class="flex gap-2 justify-end">
+              <button
+                type="button"
+                class="px-3 py-1 rounded-10 border border-color text-14"
+                (click)="resetRefereeForm()"
+              >
+                Limpiar
+              </button>
+              <button
+                type="submit"
+                class="px-3 py-1 rounded-10 background-corp color-text-light text-14"
+              >
+                {{ editingReferee ? 'Guardar cambios' : 'Crear árbitro' }}
+              </button>
+            </div>
+          </form>
+
+          <div class="border border-color rounded-10 max-h-40 overflow-auto mt-2">
+            <table class="w-full text-12">
+              <thead class="background-gray">
+                <tr>
+                  <th class="px-2 py-1 text-left">Nombre</th>
+                  <th class="px-2 py-1 text-left">Activo</th>
+                  <th class="px-2 py-1 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of (referees$ | async)" class="border-t border-color">
+                  <td class="px-2 py-1">{{ r.name }}</td>
+                  <td class="px-2 py-1">{{ r.is_active ? 'Sí' : 'No' }}</td>
+                  <td class="px-2 py-1 text-right">
+                    <button class="text-12 mr-2 color-corp" (click)="editReferee(r)">
+                      Editar
+                    </button>
+                    <button class="text-12 text-red-600" (click)="deleteReferee(r)">
+                      Borrar
+                    </button>
+                  </td>
+                </tr>
+
+                <tr *ngIf="(referees$ | async)?.length === 0">
+                  <td class="px-2 py-2 text-center" colspan="3">
+                    No hay árbitros aún.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FORM PARTIDO -->
         <form
           [formGroup]="matchForm"
           (ngSubmit)="submitMatch()"
@@ -179,10 +259,7 @@
             class="w-full border border-color rounded-10 px-2 py-1 text-14"
           >
             <option value="">Selecciona temporada</option>
-            <option
-              *ngFor="let s of seasons"
-              [value]="s.id"
-            >
+            <option *ngFor="let s of seasons" [value]="s.id">
               {{ s.name }}
             </option>
           </select>
@@ -244,6 +321,19 @@
             />
           </div>
 
+          <!-- ✅ Árbitro del partido -->
+          <ng-container *ngIf="(referees$ | async) as referees">
+            <select
+              formControlName="referee_id"
+              class="w-full border border-color rounded-10 px-2 py-1 text-14"
+            >
+              <option [ngValue]="null">Sin árbitro asignado</option>
+              <option *ngFor="let r of referees" [ngValue]="r.id">
+                {{ r.name }}
+              </option>
+            </select>
+          </ng-container>
+
           <textarea
             formControlName="notes"
             rows="2"
@@ -268,6 +358,7 @@
           </div>
         </form>
 
+        <!-- LISTADO PARTIDOS -->
         <div class="border border-color rounded-10 max-h-64 overflow-auto">
           <table class="w-full text-12">
             <thead class="background-gray">
@@ -275,41 +366,40 @@
                 <th class="px-2 py-1 text-left">Jor.</th>
                 <th class="px-2 py-1 text-left">Fecha</th>
                 <th class="px-2 py-1 text-left">Rival</th>
+                <th class="px-2 py-1 text-left">Árbitro</th>
                 <th class="px-2 py-1 text-left">Res.</th>
                 <th class="px-2 py-1 text-right">Acciones</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr
-                *ngFor="let m of (filteredMatches$ | async)"
-                class="border-t border-color"
-              >
-                <td class="px-2 py-1">{{ m.matchday }}</td>
-                <td class="px-2 py-1">{{ m.match_date }}</td>
-                <td class="px-2 py-1">{{ m.opponent }}</td>
-                <td class="px-2 py-1">
-                  {{ m.sets_for ?? '-' }} - {{ m.sets_against ?? '-' }}
-                </td>
-                <td class="px-2 py-1 text-right">
-                  <button
-                    class="text-12 mr-2 color-corp"
-                    (click)="editMatch(m)"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    class="text-12 text-red-600 mr-2"
-                    (click)="deleteMatch(m)"
-                  >
-                    Borrar
-                  </button>
-                </td>
-              </tr>
-              <tr *ngIf="((filteredMatches$ | async)?.length ?? 0) === 0">
-                <td class="px-2 py-2 text-center" colspan="5">
-                  No hay partidos para la temporada seleccionada.
-                </td>
-              </tr>
+              <ng-container *ngIf="(referees$ | async) as referees">
+                <tr *ngFor="let m of (filteredMatches$ | async)" class="border-t border-color">
+                  <td class="px-2 py-1">{{ m.matchday }}</td>
+                  <td class="px-2 py-1">{{ m.match_date }}</td>
+                  <td class="px-2 py-1">{{ m.opponent }}</td>
+                  <td class="px-2 py-1">
+                    {{ matchRefereeName(referees, m) }}
+                  </td>
+                  <td class="px-2 py-1">
+                    {{ m.sets_for ?? '-' }} - {{ m.sets_against ?? '-' }}
+                  </td>
+                  <td class="px-2 py-1 text-right">
+                    <button class="text-12 mr-2 color-corp" (click)="editMatch(m)">
+                      Editar
+                    </button>
+                    <button class="text-12 text-red-600 mr-2" (click)="deleteMatch(m)">
+                      Borrar
+                    </button>
+                  </td>
+                </tr>
+
+                <tr *ngIf="((filteredMatches$ | async)?.length ?? 0) === 0">
+                  <td class="px-2 py-2 text-center" colspan="6">
+                    No hay partidos para la temporada seleccionada.
+                  </td>
+                </tr>
+              </ng-container>
             </tbody>
           </table>
         </div>
@@ -333,9 +423,7 @@
     <ng-container *ngIf="(matches$ | async) as matches">
       <ng-container *ngIf="matches.length > 0; else noMatchesYet">
         <p class="font-size-12 color-pretitle">
-          Da de alta todas las jugadoras de la plantilla. Después, al asignar
-          estadísticas, deberás seleccionar primero el partido correspondiente
-          (que ya estará vinculado a una temporada).
+          Da de alta todas las jugadoras de la plantilla.
         </p>
 
         <form
@@ -374,13 +462,18 @@
           <textarea
             formControlName="notes"
             rows="2"
-            placeholder="Notas (lesiones, mano dominante, etc.)"
+            placeholder="Notas"
             class="w-full border border-color rounded-10 px-2 py-1 text-14"
           ></textarea>
 
           <label class="flex items-center gap-2 text-14">
             <input type="checkbox" formControlName="is_active" />
             Activa en la plantilla
+          </label>
+
+          <label class="flex items-center gap-2 text-14">
+            <input type="checkbox" formControlName="is_captain" />
+            Es capitán/a
           </label>
 
           <div class="flex gap-2 justify-end">
@@ -408,37 +501,42 @@
                 <th class="px-2 py-1 text-left">Nombre</th>
                 <th class="px-2 py-1 text-left">Posición</th>
                 <th class="px-2 py-1 text-left">Activa</th>
+                <th class="px-2 py-1 text-left">Capitán</th>
                 <th class="px-2 py-1 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              <tr
-                *ngFor="let p of players$ | async"
-                class="border-t border-color"
-              >
+              <tr *ngFor="let p of players$ | async" class="border-t border-color">
                 <td class="px-2 py-1">{{ p.number }}</td>
                 <td class="px-2 py-1">{{ p.name }}</td>
                 <td class="px-2 py-1">{{ p.position }}</td>
                 <td class="px-2 py-1">
                   {{ p.is_active ? 'Sí' : 'No' }}
                 </td>
-                <td class="px-2 py-1 text-right">
+
+                <td class="px-2 py-1">
                   <button
-                    class="text-12 mr-2 color-corp"
-                    (click)="editPlayer(p)"
+                    type="button"
+                    class="text-12"
+                    [class.color-corp]="playerIsCaptain(p)"
+                    (click)="setCaptain(p)"
                   >
+                    {{ playerIsCaptain(p) ? 'Sí' : 'No' }}
+                  </button>
+                </td>
+
+                <td class="px-2 py-1 text-right">
+                  <button class="text-12 mr-2 color-corp" (click)="editPlayer(p)">
                     Editar
                   </button>
-                  <button
-                    class="text-12 text-red-600"
-                    (click)="deletePlayer(p)"
-                  >
+                  <button class="text-12 text-red-600" (click)="deletePlayer(p)">
                     Borrar
                   </button>
                 </td>
               </tr>
+
               <tr *ngIf="(players$ | async)?.length === 0">
-                <td class="px-2 py-2 text-center" colspan="5">
+                <td class="px-2 py-2 text-center" colspan="6">
                   No hay jugadoras aún.
                 </td>
               </tr>
@@ -451,7 +549,7 @@
     <ng-template #noMatchesYet>
       <p class="font-size-12 color-pretitle">
         Antes de crear jugadoras debes tener al menos un partido creado en
-        <strong>Paso 2 · Crear Partido</strong>.
+        <strong>Paso 2 · Crear Partido y árbitro</strong>.
       </p>
     </ng-template>
   </div>
