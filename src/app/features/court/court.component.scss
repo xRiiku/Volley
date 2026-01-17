@@ -8,13 +8,16 @@
   display: flex;
   justify-content: center;
 
-  /* ✅ MÓVIL: si el campo necesita más ancho, permitimos scroll horizontal */
-  overflow-x: auto;
+  /* ✅ MÓVIL: sin scroll horizontal, el campo se adapta al viewport */
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 6px; /* para que no se “coma” la scrollbar */
+  padding: 0 12px 6px; /* margen lateral + para que no se “coma” nada */
+  box-sizing: border-box;
 }
 
 /* Opcional: scrollbar más discreta */
+/* (Quitado porque ya no hay scroll horizontal) */
+/*
 .court-wrapper::-webkit-scrollbar {
   height: 6px;
 }
@@ -25,10 +28,12 @@
   background: rgba(0, 0, 0, 0.25);
   border-radius: 999px;
 }
+*/
 
 .court-wood {
   width: 100%;
-  max-width: 900px;
+  /* ✅ Más ancho en general (desktop/tablet) */
+  max-width: 1100px;
   aspect-ratio: 2 / 1;
   padding: 16px;
   background: repeating-linear-gradient(
@@ -42,15 +47,16 @@
   align-items: center;
   justify-content: center;
 
-  /* ✅ MÓVIL: evitamos que se haga demasiado estrecho y recorte fichas */
-  min-width: 360px;
+  /* ✅ MÓVIL: quitamos min-width que forzaba scroll */
+  min-width: 0;
 }
 
-/* En móviles muy estrechos, forzamos un ancho mínimo aún más cómodo */
-@media (max-width: 420px) {
+/* En móviles muy estrechos, evitamos forzar ancho mayor que la pantalla */
+@media (max-width: 465px) {
   .court-wood {
-    min-width: 420px; /* el campo puede ser más ancho que la pantalla */
-    padding: 12px;    /* un pelín menos de padding para ganar espacio útil */
+    min-width: 0;  /* antes 420px -> provocaba scroll */
+    padding: 12px; /* mantenemos tu ajuste de padding */
+    aspect-ratio: 1.7 / 1;
   }
 }
 
