@@ -97,7 +97,12 @@ export class SupabaseService {
     }
 
     this.players$.next((data ?? []) as Player[]);
+
+    // ✅ sincroniza las jugadoras del campo con la lista nueva (captain incluido)
+    this.syncOnCourtFromPlayers();
+
     this.resetBenchFromPlayers();
+
   }
 
   async loadSeasons() {
@@ -673,6 +678,16 @@ async deleteReferee(id: string) {
   }
 
   await this.loadReferees();
+}
+
+/* Sincroniza el estado de la pista con los jugadores (Para que solo haya un capitan en el campo) */
+private syncOnCourtFromPlayers() {
+  const court = this.onCourt$.value.map((slot) => {
+    if (!slot) return null;
+    return this.findPlayerById(slot.id) ?? slot;
+  });
+
+  this.onCourt$.next(court);
 }
 
 }
