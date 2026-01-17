@@ -3,16 +3,15 @@
     class="chip-circle"
     [class.chip-circle--libero]="player.position === 'L'"
   >
-    <div *ngIf="player.is_captain" class="chip-captain-band">
-      <span class="chip-captain-letter">C</span>
-    </div>
-
     <span class="chip-number">
       {{ player.number }}
     </span>
   </div>
 
-  <span class="chip-name">
+  <span
+    class="chip-name"
+    [class.chip-name--captain]="player.is_captain"
+  >
     {{ player.name }}
   </span>
 </div>
