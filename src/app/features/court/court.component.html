@@ -1,5 +1,5 @@
-<!-- court.component.html -->
 <div class="flex flex-col gap-4">
+  <!-- CONTROLES -->
   <section>
     <div class="flex items-center justify-center mb-2 gap-2">
       <div class="flex gap-2">
@@ -21,35 +21,42 @@
       </div>
     </div>
 
+    <!-- GRUPO DRAG & DROP -->
     <div cdkDropListGroup>
-      <!-- PISTA -->
+      <!-- CAMPO -->
       <div class="court-wrapper">
         <div class="court-wood">
           <div class="court-rect">
+            <!-- columnas -->
             <div class="court-columns">
               <div class="court-column"></div>
               <div class="court-column"></div>
               <div class="court-column"></div>
             </div>
 
+            <!-- red -->
             <div class="court-net">
               <div class="net-line"></div>
               <div class="net-post net-post-top"></div>
               <div class="net-post net-post-bottom"></div>
             </div>
 
+            <!-- posiciones -->
             <div class="court-positions-grid">
-              <ng-container *ngFor="let slot of (onCourt$ | async) ?? []; let idx = index">
+              <ng-container
+                *ngFor="let slot of (onCourt$ | async) ?? []; let idx = index; trackBy: trackByCourtSlot"
+              >
                 <div
                   class="court-position-cell"
                   cdkDropList
-                  [cdkDropListData]="(onCourt$ | async) ?? []"
                   (cdkDropListDropped)="dropToPosition($event, idx)"
                 >
                   <ng-container *ngIf="slot">
                     <div
                       cdkDrag
                       [cdkDragData]="slot"
+                      (cdkDragMoved)="onDragMoved($event)"
+                      (cdkDragEnded)="onDragEnded()"
                       (click)="openStatsFor(slot)"
                       class="flex flex-col items-center gap-1"
                     >
@@ -59,16 +66,13 @@
                 </div>
               </ng-container>
             </div>
-
           </div>
         </div>
       </div>
 
       <!-- BANQUILLO -->
       <section class="mt-4 w-full">
-        <h2 class="font-size-20 font-subtitles color-subtitle mb-2">
-          Banquillo
-        </h2>
+        <h2 class="font-size-20 font-subtitles color-subtitle mb-2">Banquillo</h2>
 
         <div class="flex justify-center">
           <div
@@ -76,14 +80,19 @@
             id="benchList"
             [cdkDropListData]="(bench$ | async) ?? []"
             (cdkDropListDropped)="dropToBench($event)"
+            cdkDropListSortingDisabled="true"
             class="border border-color border-radius-15 p-3 background-white max-w-[640px] w-full"
           >
             <div class="bench-grid">
               <div
-                *ngFor="let p of (bench$ | async) ?? []"
+                *ngFor="let p of (bench$ | async) ?? []; trackBy: trackByPlayer"
                 cdkDrag
                 [cdkDragData]="p"
+                (cdkDragMoved)="onDragMoved($event)"
+                (cdkDragEnded)="onDragEnded()"
                 (click)="openStatsFor(p)"
+                [attr.data-bench-id]="p.id"
+                class="flex flex-col items-center gap-1"
               >
                 <app-player-chip [player]="p"></app-player-chip>
               </div>
@@ -106,59 +115,44 @@
     (close)="closeStats()"
   ></app-stats-panel>
 
-  <!-- ✅ TOAST CAPITAN -->
-  <div *ngIf="captainToastOpen" class="captain-toast-backdrop">
+  <!-- TOAST INFO -->
+  <div *ngIf="infoToastOpen" class="captain-toast-backdrop">
     <div class="captain-toast-dialog">
       <div class="captain-toast-header">
-        <div class="captain-toast-title">Asignar nuevo capitán</div>
-
-        <button
-          type="button"
-          class="px-3 py-1 rounded-10 border border-color text-14 background-white hover:background-gray"
-          (click)="closeCaptainToast()"
-        >
+        <span class="captain-toast-title">{{ infoToastTitle }}</span>
+        <button type="button" class="text-white text-14" (click)="closeInfoToast()">
           Cerrar
         </button>
       </div>
 
       <div class="captain-toast-body">
-        <p class="font-size-12 color-pretitle mb-3">
-          El capitán actual va a salir. Elige quién será el nuevo capitán.
+        <p class="text-center font-size-16">
+          {{ infoToastMessage }}
         </p>
-
-        <div class="flex flex-wrap justify-center gap-3">
-          <button
-            *ngFor="let p of captainCandidates"
-            type="button"
-            class="captain-toast-option"
-            (click)="chooseNewCaptainAndApply(p)"
-          >
-            <app-player-chip [player]="p"></app-player-chip>
-          </button>
-        </div>
       </div>
     </div>
   </div>
 
-  <!-- ✅ TOAST INFO (2 LIBEROS, ETC) -->
-  <div *ngIf="infoToastOpen" class="captain-toast-backdrop">
+  <!-- TOAST CAPITÁN -->
+  <div *ngIf="captainToastOpen" class="captain-toast-backdrop">
     <div class="captain-toast-dialog">
       <div class="captain-toast-header">
-        <div class="captain-toast-title">{{ infoToastTitle }}</div>
-
-        <button
-          type="button"
-          class="px-3 py-1 rounded-10 border border-color text-14 background-white hover:background-gray"
-          (click)="closeInfoToast()"
-        >
+        <span class="captain-toast-title">Selecciona nuevo capitán</span>
+        <button type="button" class="text-white text-14" (click)="closeCaptainToast()">
           Cerrar
         </button>
       </div>
 
       <div class="captain-toast-body">
-        <p class="font-size-12 color-pretitle">
-          {{ infoToastMessage }}
-        </p>
+        <div class="bench-grid">
+          <div
+            *ngFor="let p of captainCandidates; trackBy: trackByPlayer"
+            class="captain-toast-option cursor-pointer"
+            (click)="chooseNewCaptainAndApply(p)"
+          >
+            <app-player-chip [player]="p"></app-player-chip>
+          </div>
+        </div>
       </div>
     </div>
   </div>

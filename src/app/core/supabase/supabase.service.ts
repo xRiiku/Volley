@@ -76,8 +76,7 @@ export class SupabaseService {
 
     const bench = players.filter((p) => !onCourtIds.includes(p.id));
 
-    // ✅ CLAVE: líberos siempre primero (izquierda)
-    this.bench$.next(this.sortBench(bench));
+    this.bench$.next(this.sortBenchStableLiberosLeft(bench));
   }
 
   private findPlayerById(id: string): Player | undefined {
@@ -717,16 +716,16 @@ private syncOnCourtFromPlayers() {
     return p.position === 'L';
   }
 
-  private sortBench(players: Player[]) {
-    return [...players].sort((a, b) => {
-      // ✅ líberos primero
-      const aL = this.isLibero(a) ? 0 : 1;
-      const bL = this.isLibero(b) ? 0 : 1;
-      if (aL !== bL) return aL - bL;
+  private sortBenchStableLiberosLeft(players: Player[]) {
+    const liberos: Player[] = [];
+    const others: Player[] = [];
 
-      // ✅ dentro de cada grupo, por dorsal (o lo que prefieras)
-      return (a.number ?? 0) - (b.number ?? 0);
-    });
+    for (const p of players) {
+      (this.isLibero(p) ? liberos : others).push(p);
+    }
+
+    // ✅ líberos siempre a la izquierda, sin romper el orden visual del resto
+    return [...liberos, ...others];
   }
 
 }
