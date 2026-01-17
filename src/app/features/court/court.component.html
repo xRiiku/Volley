@@ -1,3 +1,4 @@
+<!-- court.component.html -->
 <div class="flex flex-col gap-4">
   <section>
     <div class="flex items-center justify-center mb-2 gap-2">
@@ -63,39 +64,37 @@
         </div>
       </div>
 
-<!-- BANQUILLO ABAJO -->
-<section class="mt-4 w-full">
-  <h2 class="font-size-20 font-subtitles color-subtitle mb-2">
-    Banquillo
-  </h2>
+      <!-- BANQUILLO -->
+      <section class="mt-4 w-full">
+        <h2 class="font-size-20 font-subtitles color-subtitle mb-2">
+          Banquillo
+        </h2>
 
-  <div class="flex justify-center">
-    <div
-      cdkDropList
-      id="benchList"
-      [cdkDropListData]="(bench$ | async) ?? []"
-      (cdkDropListDropped)="dropToBench($event)"
-      class="border border-color border-radius-15 p-3 background-white max-w-[640px] w-full"
-    >
-      <!-- ✅ GRID para que CDK calcule índices -->
-      <div class="bench-grid">
-        <div
-          *ngFor="let p of (bench$ | async) ?? []"
-          cdkDrag
-          [cdkDragData]="p"
-          (click)="openStatsFor(p)"
-        >
-          <app-player-chip [player]="p"></app-player-chip>
+        <div class="flex justify-center">
+          <div
+            cdkDropList
+            id="benchList"
+            [cdkDropListData]="(bench$ | async) ?? []"
+            (cdkDropListDropped)="dropToBench($event)"
+            class="border border-color border-radius-15 p-3 background-white max-w-[640px] w-full"
+          >
+            <div class="bench-grid">
+              <div
+                *ngFor="let p of (bench$ | async) ?? []"
+                cdkDrag
+                [cdkDragData]="p"
+                (click)="openStatsFor(p)"
+              >
+                <app-player-chip [player]="p"></app-player-chip>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <p class="font-size-12 color-pretitle mt-2 text-center">
-    Clic en una ficha para editar estadísticas.
-  </p>
-</section>
-
+        <p class="font-size-12 color-pretitle mt-2 text-center">
+          Clic en una ficha para editar estadísticas.
+        </p>
+      </section>
     </div>
   </section>
 
@@ -107,13 +106,11 @@
     (close)="closeStats()"
   ></app-stats-panel>
 
-  <!-- ✅ Toast estilo StatsPanel (backdrop + dialog) -->
+  <!-- ✅ TOAST CAPITAN -->
   <div *ngIf="captainToastOpen" class="captain-toast-backdrop">
     <div class="captain-toast-dialog">
       <div class="captain-toast-header">
-        <div class="captain-toast-title">
-          Asignar nuevo capitán
-        </div>
+        <div class="captain-toast-title">Asignar nuevo capitán</div>
 
         <button
           type="button"
@@ -126,7 +123,7 @@
 
       <div class="captain-toast-body">
         <p class="font-size-12 color-pretitle mb-3">
-          El capitán actual va a salir. Elige quién será el nuevo capitán (el cambio se completará automáticamente).
+          El capitán actual va a salir. Elige quién será el nuevo capitán.
         </p>
 
         <div class="flex flex-wrap justify-center gap-3">
@@ -139,6 +136,29 @@
             <app-player-chip [player]="p"></app-player-chip>
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ TOAST INFO (2 LIBEROS, ETC) -->
+  <div *ngIf="infoToastOpen" class="captain-toast-backdrop">
+    <div class="captain-toast-dialog">
+      <div class="captain-toast-header">
+        <div class="captain-toast-title">{{ infoToastTitle }}</div>
+
+        <button
+          type="button"
+          class="px-3 py-1 rounded-10 border border-color text-14 background-white hover:background-gray"
+          (click)="closeInfoToast()"
+        >
+          Cerrar
+        </button>
+      </div>
+
+      <div class="captain-toast-body">
+        <p class="font-size-12 color-pretitle">
+          {{ infoToastMessage }}
+        </p>
       </div>
     </div>
   </div>

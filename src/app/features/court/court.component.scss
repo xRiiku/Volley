@@ -15,21 +15,6 @@
   box-sizing: border-box;
 }
 
-/* Opcional: scrollbar más discreta */
-/* (Quitado porque ya no hay scroll horizontal) */
-/*
-.court-wrapper::-webkit-scrollbar {
-  height: 6px;
-}
-.court-wrapper::-webkit-scrollbar-track {
-  background: transparent;
-}
-.court-wrapper::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 999px;
-}
-*/
-
 .court-wood {
   width: 100%;
   /* ✅ Más ancho en general (desktop/tablet) */
@@ -54,7 +39,7 @@
 /* En móviles muy estrechos, evitamos forzar ancho mayor que la pantalla */
 @media (max-width: 465px) {
   .court-wood {
-    min-width: 0;  /* antes 420px -> provocaba scroll */
+    min-width: 0; /* antes 420px -> provocaba scroll */
     padding: 12px; /* mantenemos tu ajuste de padding */
     aspect-ratio: 1.7 / 1;
   }
@@ -141,35 +126,71 @@
   align-items: center;
   justify-content: center;
   background: transparent;
+
+  /* ✅ mejora UX drag & drop */
+  min-height: 0;
 }
 
+/* ==========================================================
+   ✅ BANQUILLO (GRID para CDK indices fiables + mismo look)
+   ========================================================== */
+.bench-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+  gap: 1rem;
+  justify-items: center;
+  align-items: start;
+}
+
+@media (max-width: 520px) {
+  .bench-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+/* ==========================================================
+   ✅ TOAST (mismo estilo que stats-panel: backdrop + dialog)
+   - Sirve tanto para capitán como para mensajes (info)
+   ========================================================== */
 .captain-toast-backdrop {
   position: fixed;
   inset: 0;
   z-index: 60;
   display: flex;
-  align-items: flex-end;
+
+  /* ✅ se ve como modal de stats */
+  align-items: flex-start;
   justify-content: center;
-  padding: 1rem;
+  padding: 2rem 1rem;
+
   background: rgba(0, 0, 0, 0.45);
 }
 
 .captain-toast-dialog {
   width: min(980px, 100%);
+  max-height: calc(100vh - 4rem);
+
   background-color: var(--cl_background_white);
   border-radius: var(--border-radius-20);
   box-shadow:
     0 18px 45px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(0, 0, 0, 0.04);
+
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+
   font-family: var(--font-text);
 }
 
+/* Cabecera azul (como stats) */
 .captain-toast-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+
   padding: 0.9rem 1rem;
   background: linear-gradient(90deg, var(--cl_corp), var(--cl_corp2));
 }
@@ -183,39 +204,34 @@
 
 .captain-toast-body {
   padding: 1rem;
+  overflow: auto; /* ✅ si hay muchas jugadoras, scroll interno */
 }
 
+/* Botón “opción” del toast (capitán) */
 .captain-toast-option {
   border: 1px solid var(--cl_border);
   border-radius: var(--border-radius-15);
   padding: 0.5rem;
   background: var(--cl_background_white);
+  transition: background 120ms ease, transform 120ms ease;
 }
 
 .captain-toast-option:hover {
   background: var(--cl_background_gray);
+  transform: translateY(-1px);
 }
 
+/* ✅ móvil: más compacto sin romper el diseño */
 @media (max-width: 520px) {
   .captain-toast-backdrop {
-    padding: 0.6rem;
+    padding: 1.25rem 0.75rem;
+  }
+
+  .captain-toast-dialog {
+    max-height: calc(100vh - 2.5rem);
   }
 
   .captain-toast-body {
-    padding: 0.8rem;
-  }
-}
-
-.bench-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
-  gap: 1rem;
-  justify-items: center;
-}
-
-@media (max-width: 520px) {
-  .bench-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.75rem;
+    padding: 0.85rem;
   }
 }
