@@ -49,7 +49,7 @@ export class CourtComponent implements OnInit, OnDestroy {
   captainCandidates: Player[] = [];
   pendingCaptainAction: PendingCaptainAction | null = null;
 
-  // ✅ Toast info (p.ej. 2 líberos)
+  // ✅ Toast info (p.ej. 2 líberos / líbero capitán)
   infoToastOpen = false;
   infoToastTitle = '';
   infoToastMessage = '';
@@ -78,6 +78,69 @@ export class CourtComponent implements OnInit, OnDestroy {
   private getCourtPlayers(court: (Player | null)[]) {
     return court.filter((p): p is Player => !!p);
   }
+
+  private openInfoToast(title: string, message: string) {
+    this.infoToastTitle = title;
+    this.infoToastMessage = message;
+    this.infoToastOpen = true;
+  }
+
+  closeInfoToast() {
+    this.infoToastOpen = false;
+    this.infoToastTitle = '';
+    this.infoToastMessage = '';
+  }
+
+  // ==========================================================
+  // REGLAS: LÍBERO
+  // ==========================================================
+
+  private isLibero(p: Player | null | undefined) {
+    return !!p && p.position === 'L';
+  }
+
+  /**
+   * ✅ Ordenar banquillo: líberos primero, luego resto.
+   * Dentro de cada grupo: por dorsal (number) para que sea estable.
+   */
+  private sortBench(players: Player[]) {
+    return [...players].sort((a, b) => {
+      const aIsL = this.isLibero(a) ? 0 : 1;
+      const bIsL = this.isLibero(b) ? 0 : 1;
+
+      if (aIsL !== bIsL) return aIsL - bIsL;     // ✅ líberos primero (izquierda)
+      return (a.number ?? 0) - (b.number ?? 0);  // ✅ estable por dorsal
+    });
+  }
+
+  private commitBench(nextBench: Player[]) {
+    this.bench$.next(this.sortBench(nextBench));
+  }
+
+  /**
+   * Si entra un líbero al campo:
+   * - si ya hay 1 líbero en pista y la que sale NO es líbero => quedaría 2 (bloquear)
+   * - si la que sale es líbero => ok (se mantiene 1)
+   */
+  private wouldHaveTwoLiberosAfter(params: {
+    incoming: Player;
+    leavingFromCourt?: Player | null;
+    courtSnapshot: (Player | null)[];
+  }) {
+    if (!this.isLibero(params.incoming)) return false;
+
+    const liberoCountNow = params.courtSnapshot.reduce(
+      (acc, x) => acc + (this.isLibero(x) ? 1 : 0),
+      0
+    );
+
+    const leavingIsLibero = this.isLibero(params.leavingFromCourt);
+    return liberoCountNow >= 1 && !leavingIsLibero;
+  }
+
+  // ==========================================================
+  // REGLAS: CAPITÁN
+  // ==========================================================
 
   private isOnlyCaptainOnCourt(captain: Player, court: (Player | null)[]) {
     if (!captain.is_captain) return false;
@@ -112,70 +175,39 @@ export class CourtComponent implements OnInit, OnDestroy {
     this.pendingCaptainAction = null;
   }
 
-  private openInfoToast(title: string, message: string) {
-    this.infoToastTitle = title;
-    this.infoToastMessage = message;
-    this.infoToastOpen = true;
-  }
-
-  closeInfoToast() {
-    this.infoToastOpen = false;
-    this.infoToastTitle = '';
-    this.infoToastMessage = '';
-  }
-
-  // ==========================================================
-  // REGLA LIBEROS
-  // ==========================================================
-
-  private isLibero(p: Player | null | undefined) {
-    return !!p && p.position === 'L';
-  }
-
   /**
-   * Si entra un líbero al campo:
-   * - si ya hay 1 líbero en pista y la que sale NO es líbero => quedaría 2 (bloquear)
-   * - si la que sale es líbero => ok (se mantiene 1)
+   * ✅ Un líbero NO puede ser capitán.
+   * ✅ Primero aplicamos swap/move en memoria, luego setCaptain().
    */
-  private wouldHaveTwoLiberosAfter(params: {
-    incoming: Player;
-    leavingFromCourt?: Player | null;
-    courtSnapshot: (Player | null)[];
-  }) {
-    if (!this.isLibero(params.incoming)) return false;
-
-    const liberoCountNow = params.courtSnapshot.reduce(
-      (acc, x) => acc + (this.isLibero(x) ? 1 : 0),
-      0
-    );
-
-    const leavingIsLibero = this.isLibero(params.leavingFromCourt);
-    return liberoCountNow >= 1 && !leavingIsLibero;
-  }
-
-  // ==========================================================
-  // CAPITAN: aplicar acción pendiente + setCaptain
-  // ==========================================================
-
   async chooseNewCaptainAndApply(newCaptain: Player) {
+    if (this.isLibero(newCaptain)) {
+      this.openInfoToast(
+        'No permitido',
+        'Un líbero no puede ser capitán.'
+      );
+      return;
+    }
+
     const action = this.pendingCaptainAction;
     if (!action) return;
 
-    // 1) Aplicar swap/move en memoria primero
     if (action.type === 'benchToCourtSwap') {
       const court = [...action.snapshotCourt];
-      const bench = [...action.snapshotBench];
+      let bench = [...action.snapshotBench];
 
+      // sacar incoming del bench
       const incomingIdx = bench.findIndex((x) => x.id === action.incoming.id);
       if (incomingIdx !== -1) bench.splice(incomingIdx, 1);
 
+      // bajar capitán al bench
       bench.push(action.leavingCaptain);
+
+      // entrar incoming al campo
       court[action.posIndex] = action.incoming;
 
       this.onCourt$.next(court);
-      this.bench$.next(bench);
+      this.commitBench(bench);
 
-      // 2) luego capitán en BD
       await this.db.setCaptain(newCaptain.id);
 
       this.closeCaptainToast();
@@ -184,7 +216,7 @@ export class CourtComponent implements OnInit, OnDestroy {
 
     if (action.type === 'moveCaptainToBench') {
       const court = [...action.snapshotCourt];
-      const bench = [...action.snapshotBench];
+      let bench = [...action.snapshotBench];
 
       const idx = court.findIndex((p) => p?.id === action.leavingCaptain.id);
       if (idx !== -1) court[idx] = null;
@@ -194,7 +226,7 @@ export class CourtComponent implements OnInit, OnDestroy {
       }
 
       this.onCourt$.next(court);
-      this.bench$.next(bench);
+      this.commitBench(bench);
 
       await this.db.setCaptain(newCaptain.id);
 
@@ -204,14 +236,14 @@ export class CourtComponent implements OnInit, OnDestroy {
   }
 
   // ==========================================================
-  // DRAG & DROP (SIMETRICO + VALIDACION LIBERO)
+  // DRAG & DROP (SIMÉTRICO + VALIDACIONES)
   // ==========================================================
 
   dropToPosition(event: CdkDragDrop<any>, posIndex: number) {
     if (this.captainToastOpen || this.infoToastOpen) return;
 
     const court = [...this.onCourt$.value];
-    const bench = [...this.bench$.value];
+    let bench = [...this.bench$.value];
 
     const dragged: Player = event.item.data;
     if (!dragged) return;
@@ -230,7 +262,6 @@ export class CourtComponent implements OnInit, OnDestroy {
     if (target) {
       // Campo -> Campo
       if (fromCourtIdx !== -1) {
-        // (no cambia nº de líberos)
         court[posIndex] = dragged;
         court[fromCourtIdx] = target;
         this.onCourt$.next(court);
@@ -239,7 +270,7 @@ export class CourtComponent implements OnInit, OnDestroy {
 
       // Bench -> Campo
       if (fromBenchIdx !== -1) {
-        // ✅ regla líbero
+        // ✅ regla líbero (no 2 en pista)
         if (
           this.wouldHaveTwoLiberosAfter({
             incoming: dragged,
@@ -254,7 +285,7 @@ export class CourtComponent implements OnInit, OnDestroy {
           return;
         }
 
-        // ✅ regla capitán (si el que sale era capitán único y el que entra no lo es)
+        // ✅ regla capitán único (si el que sale era capitán único y el que entra no lo es)
         const mustPickCaptain =
           target.is_captain &&
           this.isOnlyCaptainOnCourt(target, court) &&
@@ -277,8 +308,8 @@ export class CourtComponent implements OnInit, OnDestroy {
         bench.push(target);
         court[posIndex] = dragged;
 
-        this.bench$.next(bench);
         this.onCourt$.next(court);
+        this.commitBench(bench);
         return;
       }
 
@@ -286,7 +317,7 @@ export class CourtComponent implements OnInit, OnDestroy {
     }
 
     // =========================
-    // DESTINO VACIO => MOVER
+    // DESTINO VACÍO => MOVER
     // =========================
     if (!target) {
       // Bench -> Campo
@@ -309,8 +340,8 @@ export class CourtComponent implements OnInit, OnDestroy {
         bench.splice(fromBenchIdx, 1);
         court[posIndex] = dragged;
 
-        this.bench$.next(bench);
         this.onCourt$.next(court);
+        this.commitBench(bench);
         return;
       }
 
@@ -328,7 +359,7 @@ export class CourtComponent implements OnInit, OnDestroy {
     if (this.captainToastOpen || this.infoToastOpen) return;
 
     const court = [...this.onCourt$.value];
-    const bench = [...this.bench$.value];
+    let bench = [...this.bench$.value];
 
     const dragged: Player = event.item.data;
     if (!dragged) return;
@@ -339,7 +370,7 @@ export class CourtComponent implements OnInit, OnDestroy {
     // Bench -> Bench (reordenar)
     if (fromBenchIdx !== -1 && fromCourtIdx === -1) {
       moveItemInArray(bench, fromBenchIdx, event.currentIndex);
-      this.bench$.next(bench);
+      this.commitBench(bench);
       return;
     }
 
@@ -358,13 +389,13 @@ export class CourtComponent implements OnInit, OnDestroy {
 
       // swap si cae sobre una ficha del bench (grid => índice fiable)
       const targetBench = bench[event.currentIndex];
+
       if (targetBench && targetBench.id !== dragged.id) {
-        // ✅ regla líbero NO aplica aquí (sale del campo)
         bench[event.currentIndex] = dragged;
         court[fromCourtIdx] = targetBench;
 
-        this.bench$.next(bench);
         this.onCourt$.next(court);
+        this.commitBench(bench);
         return;
       }
 
@@ -372,8 +403,8 @@ export class CourtComponent implements OnInit, OnDestroy {
       court[fromCourtIdx] = null;
       bench.push(dragged);
 
-      this.bench$.next(bench);
       this.onCourt$.next(court);
+      this.commitBench(bench);
       return;
     }
   }

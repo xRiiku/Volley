@@ -69,12 +69,15 @@ export class SupabaseService {
 
   private resetBenchFromPlayers() {
     const players = this.players$.value.filter((p) => p.is_active);
+
     const onCourtIds = this.onCourt$.value
       .filter((p) => p !== null)
       .map((p) => (p as Player).id);
 
     const bench = players.filter((p) => !onCourtIds.includes(p.id));
-    this.bench$.next(bench);
+
+    // ✅ CLAVE: líberos siempre primero (izquierda)
+    this.bench$.next(this.sortBench(bench));
   }
 
   private findPlayerById(id: string): Player | undefined {
@@ -275,18 +278,36 @@ export class SupabaseService {
 
   // ✅ NUEVO: asignar capitán desde UI asegurando solo 1
   async setCaptain(playerId: string) {
-    // 1) quitar capitán actual (solo a las que estén en true)
+    // 1️⃣ Obtenemos el jugador que se quiere marcar como capitán
+    const { data: player, error: errPlayer } = await supabase
+      .from('players')
+      .select('id, position')
+      .eq('id', playerId)
+      .single();
+
+    if (errPlayer || !player) {
+      console.error('Error obteniendo jugadora para capitán', errPlayer);
+      throw errPlayer;
+    }
+
+    // 2️⃣ Regla CRÍTICA: un líbero NO puede ser capitán
+    if (player.position === 'L') {
+      console.warn('Intento de asignar capitán a un líbero bloqueado');
+      throw new Error('UN_LIBERO_NO_PUEDE_SER_CAPITAN');
+    }
+
+    // 3️⃣ Quitamos capitán actual (si existe)
     const { error: errReset } = await supabase
       .from('players')
       .update({ is_captain: false })
       .eq('is_captain', true);
 
     if (errReset) {
-      console.error('Error reseteando capitanes', errReset);
+      console.error('Error reseteando capitán', errReset);
       throw errReset;
     }
 
-    // 2) asignar nueva capitana
+    // 4️⃣ Asignamos nuevo capitán
     const { error: errSet } = await supabase
       .from('players')
       .update({ is_captain: true })
@@ -297,6 +318,7 @@ export class SupabaseService {
       throw errSet;
     }
 
+    // 5️⃣ Refrescamos estado en frontend
     await this.loadPlayers();
   }
 
@@ -689,5 +711,22 @@ private syncOnCourtFromPlayers() {
 
   this.onCourt$.next(court);
 }
+
+/* Helper para identificar si un jugador es líbero y ponerlo al inicio del banquillo */
+  private isLibero(p: Player) {
+    return p.position === 'L';
+  }
+
+  private sortBench(players: Player[]) {
+    return [...players].sort((a, b) => {
+      // ✅ líberos primero
+      const aL = this.isLibero(a) ? 0 : 1;
+      const bL = this.isLibero(b) ? 0 : 1;
+      if (aL !== bL) return aL - bL;
+
+      // ✅ dentro de cada grupo, por dorsal (o lo que prefieras)
+      return (a.number ?? 0) - (b.number ?? 0);
+    });
+  }
 
 }

@@ -138,6 +138,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
   gap: 1rem;
+
+  /* ✅ que el grid arranque SIEMPRE desde la izquierda */
+  justify-content: start;
   justify-items: center;
   align-items: start;
 }
@@ -146,6 +149,7 @@
   .bench-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 0.75rem;
+    justify-content: start;
   }
 }
 
